@@ -9,8 +9,8 @@
   --text: #0c0c0e;
   --muted: #63636e;
   --line: rgba(12, 12, 20, 0.09);
-  --glass: rgba(255, 255, 255, 0.62);
-  --glass-strong: rgba(255, 255, 255, 0.85);
+  --glass: rgba(255, 255, 255, 0.28);
+  --glass-strong: rgba(255, 255, 255, 0.5);
   --radius: 20px;
   --nav-h: 64px;
   --font-body: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -69,13 +69,13 @@ body {
 /* ---------- Liquid glass (light) ---------- */
 .glass {
   background: var(--glass);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  backdrop-filter: blur(22px) saturate(150%);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.85),
-    0 14px 40px rgba(12, 12, 20, 0.07);
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    0 14px 40px rgba(12, 12, 20, 0.06);
 }
 
 /* ---------- Typography helpers ---------- */
@@ -271,11 +271,12 @@ main { position: relative; z-index: 1; }
   white-space: nowrap;
 }
 .logo-item img {
-  max-height: 36px;
-  max-width: 140px;
+  width: auto;
+  height: 48px;
   object-fit: contain;
+  mix-blend-mode: multiply; /* hides the logos' white boxes on the glass */
   filter: grayscale(1);
-  opacity: 0.75;
+  opacity: 0.8;
   transition: filter 0.25s ease, opacity 0.25s ease;
 }
 .logo-item img:hover { filter: none; opacity: 1; }
