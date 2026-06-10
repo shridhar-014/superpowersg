@@ -181,6 +181,9 @@
       ctx.beginPath();
       ctx.arc(0, 0, ball.r, 0, Math.PI * 2);
       ctx.fill();
+      ctx.strokeStyle = "rgba(12,12,20,0.3)";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
       // pentagon
       ctx.fillStyle = "#15151c";
       ctx.beginPath();
@@ -211,19 +214,19 @@
         p.x += p.vx; p.y += p.vy; p.vy += 0.12; p.life -= 0.03;
         if (p.life <= 0) { particles.splice(i, 1); continue; }
         ctx.globalAlpha = p.life;
-        ctx.fillStyle = i % 2 ? "#ff5c1f" : "#00e5ff";
+        ctx.fillStyle = i % 2 ? "#0c0c0e" : "#9a9aa4";
         ctx.fillRect(p.x, p.y, 3, 3);
       }
       ctx.globalAlpha = 1;
     }
 
     function text(msg, sub) {
-      ctx.fillStyle = "rgba(255,255,255,0.94)";
+      ctx.fillStyle = "rgba(12,12,14,0.92)";
       ctx.font = "700 " + Math.max(15, W * 0.055) + "px 'Space Grotesk', sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(msg, W / 2, H * 0.2);
       if (sub) {
-        ctx.fillStyle = "rgba(255,255,255,0.55)";
+        ctx.fillStyle = "rgba(12,12,14,0.5)";
         ctx.font = "500 " + Math.max(11, W * 0.036) + "px 'Space Grotesk', sans-serif";
         ctx.fillText(sub, W / 2, H * 0.2 + Math.max(20, W * 0.07));
       }
@@ -279,124 +282,5 @@
     window.addEventListener("resize", resize);
     resize();
     rafId = requestAnimationFrame(loop);
-  })();
-
-  /* ============================================================
-     Kit Studio — live jersey customiser
-     ============================================================ */
-  (function kitStudio() {
-    var svg = $("#jerseySvg");
-    if (!svg) return;
-
-    var COLORS = [
-      { hex: "#ff5c1f", name: "Ember" },
-      { hex: "#e11d48", name: "Crimson" },
-      { hex: "#2563eb", name: "Royal" },
-      { hex: "#0ea5e9", name: "Sky" },
-      { hex: "#059669", name: "Emerald" },
-      { hex: "#7c3aed", name: "Violet" },
-      { hex: "#111827", name: "Jet" },
-      { hex: "#f8fafc", name: "White" }
-    ];
-
-    var design = { primary: "#2563eb", accent: "#f8fafc", pattern: "sash", name: "JAYPEE" };
-
-    var body = $("#jerseyBody");
-    var sleeves = [$("#sleeveL"), $("#sleeveR")];
-    var collar = $("#collar");
-    var nameText = $("#jerseyName");
-    var scriptText = $("#jerseyScript");
-    var patterns = { hoops: $("#patHoops"), sash: $("#patSash"), split: $("#patSplit") };
-
-    function luminance(hex) {
-      var n = parseInt(hex.slice(1), 16);
-      var r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
-      return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    }
-
-    function render() {
-      body.setAttribute("fill", design.primary);
-      sleeves.forEach(function (s) { s.setAttribute("fill", design.accent); });
-      collar.setAttribute("stroke", design.accent);
-      Object.keys(patterns).forEach(function (k) {
-        patterns[k].style.display = design.pattern === k ? "" : "none";
-        $$("#pat" + k.charAt(0).toUpperCase() + k.slice(1) + " rect, #pat" + k.charAt(0).toUpperCase() + k.slice(1) + " path").forEach(function (el) {
-          el.setAttribute("fill", design.accent);
-        });
-      });
-      // readable name colour against whatever sits behind the chest
-      var bgLum = design.pattern === "split" || design.pattern === "sash" || design.pattern === "hoops"
-        ? (luminance(design.primary) + luminance(design.accent)) / 2
-        : luminance(design.primary);
-      var ink = bgLum > 0.6 ? "#15151c" : "#ffffff";
-      nameText.setAttribute("fill", ink);
-      scriptText.setAttribute("fill", ink);
-      nameText.textContent = design.name || "JAYPEE";
-    }
-
-    function buildSwatches(containerId, key) {
-      var box = $(containerId);
-      COLORS.forEach(function (c) {
-        var b = document.createElement("button");
-        b.type = "button";
-        b.className = "swatch" + (design[key] === c.hex ? " active" : "");
-        b.style.background = c.hex;
-        b.setAttribute("role", "radio");
-        b.setAttribute("aria-label", c.name);
-        b.setAttribute("aria-checked", design[key] === c.hex ? "true" : "false");
-        b.addEventListener("click", function () {
-          design[key] = c.hex;
-          $$(containerId + " .swatch").forEach(function (s) {
-            s.classList.remove("active");
-            s.setAttribute("aria-checked", "false");
-          });
-          b.classList.add("active");
-          b.setAttribute("aria-checked", "true");
-          render();
-        });
-        box.appendChild(b);
-      });
-    }
-    buildSwatches("#primarySwatches", "primary");
-    buildSwatches("#accentSwatches", "accent");
-
-    $$("#patternSeg button").forEach(function (b) {
-      b.addEventListener("click", function () {
-        design.pattern = b.dataset.pattern;
-        $$("#patternSeg button").forEach(function (x) { x.classList.remove("active"); });
-        b.classList.add("active");
-        render();
-      });
-    });
-
-    var nameInput = $("#teamNameInput");
-    nameInput.addEventListener("input", function () {
-      design.name = nameInput.value.toUpperCase().slice(0, 14);
-      render();
-    });
-
-    $("#attachDesign").addEventListener("click", function () {
-      function colorName(hex) {
-        for (var i = 0; i < COLORS.length; i++) if (COLORS[i].hex === hex) return COLORS[i].name;
-        return hex;
-      }
-      var summary = "Primary: " + colorName(design.primary) + " (" + design.primary + ") · " +
-        "Accent: " + colorName(design.accent) + " (" + design.accent + ") · " +
-        "Pattern: " + design.pattern + " · Team name: " + (design.name || "—");
-      var hidden = $("#kitDesign");
-      if (hidden) hidden.value = summary;
-      var note = $("#attachedDesign");
-      if (note) {
-        note.hidden = false;
-        note.querySelector("span").textContent = summary;
-      }
-      var studioNote = $("#studioNote");
-      if (studioNote) studioNote.textContent = "Design attached — finish the enquiry form below. ✔";
-      var form = $("#enquiryForm");
-      if (form) form.scrollIntoView({ behavior: "smooth", block: "start" });
-      toast("🎽 Your design is attached to the enquiry form");
-    });
-
-    render();
   })();
 })();

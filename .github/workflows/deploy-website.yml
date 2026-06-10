@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - "claude/loving-ride-gmaydz"
     paths:
       - "website/**"
       - ".github/workflows/deploy-website.yml"
