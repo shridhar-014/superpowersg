@@ -14,7 +14,7 @@
   --radius: 20px;
   --nav-h: 64px;
   --font-body: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-script: "Yellowtail", "Brush Script MT", cursive;
+  --font-script: "Style Script", "Brush Script MT", cursive;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -187,11 +187,9 @@ main { position: relative; z-index: 1; }
   color: var(--muted);
 }
 .tagline {
-  margin-top: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.3em;
-  font-size: 0.78rem;
-  font-weight: 700;
+  margin-top: 6px;
+  font-size: clamp(1.5rem, 4.5vw, 2.2rem);
+  line-height: 1.2;
   color: var(--text);
 }
 .lede { margin-top: 16px; color: var(--muted); max-width: 46ch; font-size: 1.02rem; }
