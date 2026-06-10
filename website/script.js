@@ -83,10 +83,11 @@
     var state = "idle"; // idle | play | over
     var ball = { x: 0, y: 0, vx: 0, vy: 0, r: 26, spin: 0 };
     var score = 0;
-    var gravity = 0.45;
+    var gravity = 0.36;
     var particles = [];
     var running = true;
     var rafId = null;
+    var lastT = 0; // physics are scaled by real elapsed time so 60Hz and 120Hz screens play identically
 
     function resize() {
       var rect = canvas.getBoundingClientRect();
@@ -116,9 +117,9 @@
     }
 
     function kick(px, py) {
-      ball.vy = -(H * 0.022 + 4.4);
+      ball.vy = -(H * 0.015 + 3.2);
       var dx = ball.x - px;
-      ball.vx = dx * 0.22 + (Math.random() - 0.5) * 2.4;
+      ball.vx = Math.max(-3.2, Math.min(3.2, dx * 0.12 + (Math.random() - 0.5) * 1.4));
       ball.spin += ball.vx * 0.02;
       for (var i = 0; i < 7; i++) {
         particles.push({
@@ -208,10 +209,10 @@
       ctx.restore();
     }
 
-    function drawParticles() {
+    function drawParticles(dt) {
       for (var i = particles.length - 1; i >= 0; i--) {
         var p = particles[i];
-        p.x += p.vx; p.y += p.vy; p.vy += 0.12; p.life -= 0.03;
+        p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 0.12 * dt; p.life -= 0.03 * dt;
         if (p.life <= 0) { particles.splice(i, 1); continue; }
         ctx.globalAlpha = p.life;
         ctx.fillStyle = i % 2 ? "#0c0c0e" : "#9a9aa4";
@@ -232,16 +233,18 @@
       }
     }
 
-    function loop() {
+    function loop(t) {
       rafId = null;
       if (!running) return;
+      var dt = lastT ? Math.min((t - lastT) / 16.667, 2.5) : 1;
+      lastT = t;
       ctx.clearRect(0, 0, W, H);
 
       if (state === "play") {
-        ball.vy += gravity;
-        ball.x += ball.vx;
-        ball.y += ball.vy;
-        ball.spin += ball.vx * 0.004;
+        ball.vy += gravity * dt;
+        ball.x += ball.vx * dt;
+        ball.y += ball.vy * dt;
+        ball.spin += ball.vx * 0.004 * dt;
         // walls
         if (ball.x < ball.r) { ball.x = ball.r; ball.vx = Math.abs(ball.vx) * 0.85; }
         if (ball.x > W - ball.r) { ball.x = W - ball.r; ball.vx = -Math.abs(ball.vx) * 0.85; }
@@ -259,13 +262,14 @@
         text("Dropped at " + score + "!", "Tap to try again");
       }
 
-      drawParticles();
+      drawParticles(dt);
       if (state !== "over") drawBall();
       rafId = requestAnimationFrame(loop);
     }
 
     function setRunning(on) {
       running = on;
+      lastT = 0; // forget paused time so the ball doesn't lurch on resume
       if (on && rafId === null) rafId = requestAnimationFrame(loop);
     }
 
