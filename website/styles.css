@@ -167,26 +167,24 @@ main { position: relative; z-index: 1; }
   align-items: center;
   min-height: 92vh;
 }
-.hero-script {
+.hero-wordmark {
   display: block;
-  font-size: clamp(3rem, 9vw, 5.2rem);
-  color: var(--text);
-  line-height: 1.15;
-  padding-right: 0.2em; /* keep the script flourish from clipping */
+  width: min(430px, 100%);
+  height: auto;
 }
 .hero-line {
   display: block;
   font-size: clamp(1.6rem, 4.5vw, 2.6rem);
   font-weight: 700;
   letter-spacing: -0.03em;
-  margin-top: 4px;
+  margin-top: 14px;
   color: var(--muted);
 }
-.tagline {
-  margin-top: 6px;
-  font-size: clamp(1.5rem, 4.5vw, 2.2rem);
-  line-height: 1.2;
-  color: var(--text);
+.tagline { margin-top: 16px; }
+.tagline-img {
+  display: block;
+  width: min(380px, 88%);
+  height: auto;
 }
 .lede { margin-top: 16px; color: var(--muted); max-width: 46ch; font-size: 1.02rem; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
@@ -396,7 +394,7 @@ select.field { appearance: none; }
   justify-items: center;
 }
 .footer-logo { height: 52px; width: auto; display: block; margin: 0 auto; }
-.footer-brand p { color: var(--muted); text-transform: uppercase; letter-spacing: 0.26em; font-size: 0.68rem; margin-top: 4px; }
+.footer-tagline { height: 15px; width: auto; display: block; margin: 10px auto 0; opacity: 0.75; }
 .footer-links { display: flex; flex-wrap: wrap; gap: 18px; justify-content: center; }
 .footer-links a { color: var(--muted); text-decoration: none; font-size: 0.88rem; }
 .footer-links a:hover { color: var(--text); }
