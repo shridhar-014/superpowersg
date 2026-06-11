@@ -114,16 +114,20 @@ body {
 /* ---------- Sketch athletes band (scroll-engaged) ---------- */
 .bg-sketch {
   position: fixed;
-  left: 0; right: 0; bottom: -4vh;
-  height: min(52vh, 560px);
+  inset: 0; /* full viewport so the layer reads consistently from the top */
   z-index: 0;
   pointer-events: none;
   background-image: url("assets/brand/bg-athletes.webp");
   background-size: cover;
   background-position: center bottom;
   mix-blend-mode: multiply; /* melts the artwork's white into the page */
-  opacity: calc(0.3 + var(--scroll) * 0.55);
-  transform: translate3d(calc(var(--scroll) * -4vw), calc(var(--scroll) * -3vh), 0) scale(calc(1.06 + var(--scroll) * 0.06));
+  opacity: calc(0.3 + var(--scroll) * 0.5);
+  /* art fades in smoothly — no visible seam where it begins */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.35) 32%, #000 64%);
+  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.35) 32%, #000 64%);
+  /* zoom-only motion anchored at the bottom — edges can never slide into view */
+  transform: scale(calc(1.02 + var(--scroll) * 0.05));
+  transform-origin: center bottom;
   will-change: transform, opacity;
 }
 
