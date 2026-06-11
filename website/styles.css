@@ -302,6 +302,7 @@ main { position: relative; z-index: 1; }
 .gallery-tile.has-photo { cursor: zoom-in; }
 
 /* ---------- Lightbox ---------- */
+.lightbox[hidden] { display: none; }
 .lightbox {
   position: fixed;
   inset: 0;
