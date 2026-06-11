@@ -70,10 +70,13 @@
     if (!lb) return;
     var lbImg = $("#lightboxImg");
     var lbCap = $("#lightboxCap");
+    var lbClose = $("#lightboxClose");
+    var lastFocus = null;
 
     function close() {
       lb.hidden = true;
       document.body.style.overflow = "";
+      if (lastFocus) lastFocus.focus();
     }
     $$(".gallery-tile.has-photo").forEach(function (fig) {
       fig.setAttribute("role", "button");
@@ -89,6 +92,8 @@
         lbCap.textContent = (strong ? strong.textContent : "") + (span ? " — " + span.textContent : "");
         lb.hidden = false;
         document.body.style.overflow = "hidden";
+        lastFocus = fig;
+        if (lbClose) lbClose.focus();
       }
       fig.addEventListener("click", open);
       fig.addEventListener("keydown", function (e) {

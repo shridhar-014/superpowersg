@@ -14,6 +14,8 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://jaypeesports.in/">
   <meta property="og:image" content="https://jaypeesports.in/assets/events/national-games-goa-2023.jpg">
+  <meta property="og:image:alt" content="Jharkhand team in Jaypee sportswear at the National Games">
+  <meta property="og:locale" content="en_IN">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/svg+xml" href="assets/brand/favicon.svg">
   <link rel="icon" type="image/png" sizes="64x64" href="assets/brand/favicon-64.png">
@@ -21,6 +23,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Style+Script&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="assets/brand/wordmark.svg" fetchpriority="high">
   <link rel="stylesheet" href="styles.css">
   <script type="application/ld+json">
   {
@@ -89,6 +92,8 @@
 </head>
 <body>
 
+  <a class="skip-link" href="#main">Skip to content</a>
+
   <!-- Grain overlay (premium gradient + film grain) -->
   <div class="grain" aria-hidden="true"></div>
 
@@ -117,14 +122,15 @@
     </button>
   </header>
 
-  <main>
+  <main id="main">
 
     <!-- ============ HERO ============ -->
     <section class="hero" id="home">
       <div class="hero-copy">
         <p class="eyebrow reveal">Sportswear · Equipment · Custom Teamwear</p>
         <h1 class="reveal">
-          <img class="hero-wordmark" src="assets/brand/wordmark.svg" alt="Jaypee Sports" width="374" height="82">
+          <span class="sr-only">Jaypee Sports — sportswear and sports equipment manufacturer in India</span>
+          <img class="hero-wordmark" src="assets/brand/wordmark.svg" alt="Jaypee Sports" width="374" height="82" fetchpriority="high">
           <span class="hero-line">Built for every game.</span>
         </h1>
         <p class="tagline reveal">
@@ -389,7 +395,7 @@
         <input type="hidden" name="_captcha" value="false">
         <input type="hidden" name="_template" value="table">
         <input type="hidden" name="_next" id="formNext" value="https://jaypeesports.in/?submitted=1#teamwear">
-        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
 
         <div class="form-grid">
           <label>Your name<input class="field" type="text" name="name" required autocomplete="name"></label>
@@ -427,7 +433,7 @@
           <input type="hidden" name="_subject" value="Store launch waitlist — jaypeesports.in">
           <input type="hidden" name="_captcha" value="false">
           <input type="hidden" name="_next" class="js-form-next" value="https://jaypeesports.in/?submitted=1#store">
-          <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+          <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
           <input class="field" type="email" name="email" placeholder="you@email.com" required aria-label="Email for launch updates">
           <button class="btn btn-primary" type="submit">Notify me</button>
         </form>
@@ -501,6 +507,7 @@
       <a href="#products">Products</a>
       <a href="#teamwear">Teamwear</a>
       <a href="#locations">Stores</a>
+      <a href="https://www.facebook.com/JaypeeSportsSalesPvtLtd" target="_blank" rel="noopener">Facebook</a>
     </nav>
     <p class="footer-seo">
       Jaypee Sports Sales Pvt. Ltd. is a sportswear manufacturer and sports equipment
