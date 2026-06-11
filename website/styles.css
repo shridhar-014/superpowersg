@@ -86,10 +86,9 @@ body {
   will-change: transform;
   background: conic-gradient(from 20deg,
     transparent 0%,
-    rgba(124, 58, 237, 0.10) 12%, transparent 26%,
-    rgba(6, 182, 212, 0.09) 40%, transparent 54%,
-    rgba(219, 39, 119, 0.10) 68%, transparent 82%,
-    rgba(245, 158, 11, 0.07) 92%, transparent 100%);
+    rgba(124, 58, 237, 0.07) 14%, transparent 30%,
+    rgba(99, 102, 241, 0.06) 46%, transparent 60%,
+    rgba(6, 182, 212, 0.05) 74%, transparent 88%);
   -webkit-mask-image: radial-gradient(circle, transparent 22%, #000 46%, transparent 74%);
   mask-image: radial-gradient(circle, transparent 22%, #000 46%, transparent 74%);
 }
@@ -97,17 +96,17 @@ body {
 .orb { position: absolute; border-radius: 50%; will-change: transform; }
 .orb-a {
   width: 62vmax; height: 62vmax; top: -25vmax; right: -20vmax;
-  background: radial-gradient(circle at center, rgba(124, 58, 237, 0.13), rgba(219, 39, 119, 0.06) 48%, transparent 72%);
+  background: radial-gradient(circle at center, rgba(124, 58, 237, 0.10), rgba(99, 102, 241, 0.05) 48%, transparent 72%);
   transform: translate3d(calc(var(--scroll) * 9vw), calc(var(--scroll) * -26vh), 0) scale(calc(1 + var(--scroll) * 0.25));
 }
 .orb-b {
   width: 56vmax; height: 56vmax; bottom: -28vmax; left: -22vmax;
-  background: radial-gradient(circle at center, rgba(6, 182, 212, 0.11), rgba(124, 58, 237, 0.05) 50%, transparent 74%);
+  background: radial-gradient(circle at center, rgba(99, 102, 241, 0.08), rgba(6, 182, 212, 0.04) 50%, transparent 74%);
   transform: translate3d(calc(var(--scroll) * -11vw), calc(var(--scroll) * 20vh), 0);
 }
 .orb-c {
   width: 36vmax; height: 36vmax; top: 45%; left: 55%;
-  background: radial-gradient(circle at center, rgba(219, 39, 119, 0.09), rgba(245, 158, 11, 0.05) 55%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(6, 182, 212, 0.06), rgba(124, 58, 237, 0.04) 55%, transparent 70%);
   transform: translate3d(calc(var(--scroll) * 14vw), calc(var(--scroll) * -48vh), 0) rotate(calc(var(--scroll) * 60deg));
 }
 
@@ -121,7 +120,7 @@ body {
   background-size: cover;
   background-position: center bottom;
   mix-blend-mode: multiply; /* melts the artwork's white into the page */
-  opacity: calc(0.3 + var(--scroll) * 0.5);
+  opacity: calc(0.2 + var(--scroll) * 0.3); /* softened so dense sketch areas never read as a dark patch */
   /* art fades in smoothly — no visible seam where it begins */
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.35) 32%, #000 64%);
   mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.35) 32%, #000 64%);
