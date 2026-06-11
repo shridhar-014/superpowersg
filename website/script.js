@@ -43,6 +43,16 @@
     reveals.forEach(function (el) { el.classList.add("in"); });
   }
 
+  /* ---------- Analytics events (no-ops if GA is blocked) ---------- */
+  function track(name, params) {
+    if (typeof window.gtag === "function") window.gtag("event", name, params || {});
+  }
+  var enquiryForm = document.getElementById("enquiryForm");
+  if (enquiryForm) enquiryForm.addEventListener("submit", function () { track("enquiry_submit"); });
+  $$(".notify").forEach(function (f) {
+    f.addEventListener("submit", function () { track("waitlist_submit"); });
+  });
+
   /* ---------- Toast ---------- */
   var toastEl = $("#toast");
   var toastTimer;
@@ -181,6 +191,7 @@
           localStorage.setItem("jp-reward-score", String(s));
         } catch (e) {}
         toast("🎁 You earned " + r.code + " — " + r.label + "!");
+        track("game_reward", { code: r.code, score: s });
       }
       showReward();
     }
