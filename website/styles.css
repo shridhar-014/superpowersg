@@ -332,6 +332,7 @@ main { position: relative; z-index: 1; }
 .logo-strip {
   padding: 26px 0;
   overflow: hidden;
+  background: #ffffff; /* solid white panel behind the logos */
   -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
   mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
 }
@@ -342,7 +343,6 @@ main { position: relative; z-index: 1; }
   width: max-content;
   animation: scroll-x 42s linear infinite;
 }
-.logo-strip:hover .logo-row { animation-play-state: paused; }
 @keyframes scroll-x { to { transform: translateX(-50%); } }
 .logo-item {
   display: flex;
