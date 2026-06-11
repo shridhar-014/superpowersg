@@ -74,42 +74,6 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* ---------- Scroll-reactive aurora + premium parallax orbs ---------- */
-.aurora {
-  position: fixed;
-  z-index: 0;
-  pointer-events: none;
-  width: 115vmax; height: 115vmax;
-  left: 50%; top: 35%;
-  border-radius: 50%;
-  transform: translate(-50%, -50%) rotate(calc(var(--scroll) * 200deg));
-  will-change: transform;
-  background: conic-gradient(from 20deg,
-    transparent 0%,
-    rgba(124, 58, 237, 0.07) 14%, transparent 30%,
-    rgba(99, 102, 241, 0.06) 46%, transparent 60%,
-    rgba(6, 182, 212, 0.05) 74%, transparent 88%);
-  -webkit-mask-image: radial-gradient(circle, transparent 22%, #000 46%, transparent 74%);
-  mask-image: radial-gradient(circle, transparent 22%, #000 46%, transparent 74%);
-}
-.orbs { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-.orb { position: absolute; border-radius: 50%; will-change: transform; }
-.orb-a {
-  width: 62vmax; height: 62vmax; top: -25vmax; right: -20vmax;
-  background: radial-gradient(circle at center, rgba(124, 58, 237, 0.10), rgba(99, 102, 241, 0.05) 48%, transparent 72%);
-  transform: translate3d(calc(var(--scroll) * 9vw), calc(var(--scroll) * -26vh), 0) scale(calc(1 + var(--scroll) * 0.25));
-}
-.orb-b {
-  width: 56vmax; height: 56vmax; bottom: -28vmax; left: -22vmax;
-  background: radial-gradient(circle at center, rgba(99, 102, 241, 0.08), rgba(6, 182, 212, 0.04) 50%, transparent 74%);
-  transform: translate3d(calc(var(--scroll) * -11vw), calc(var(--scroll) * 20vh), 0);
-}
-.orb-c {
-  width: 36vmax; height: 36vmax; top: 45%; left: 55%;
-  background: radial-gradient(circle at center, rgba(6, 182, 212, 0.06), rgba(124, 58, 237, 0.04) 55%, transparent 70%);
-  transform: translate3d(calc(var(--scroll) * 14vw), calc(var(--scroll) * -48vh), 0) rotate(calc(var(--scroll) * 60deg));
-}
-
 /* ---------- Sketch athletes band (scroll-engaged) ---------- */
 .bg-sketch {
   position: fixed;
@@ -560,7 +524,7 @@ select.field { appearance: none; }
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .orb, .logo-row, .shimmer::before { animation: none !important; }
+  .logo-row, .shimmer::before { animation: none !important; }
   .reveal { opacity: 1; transform: none; transition: none; }
 }
 
