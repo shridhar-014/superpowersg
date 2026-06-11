@@ -66,52 +66,81 @@ body {
 @keyframes drift-b { to { transform: translate(10vmax, -8vmax) scale(1.06); } }
 @keyframes drift-c { to { transform: translate(-12vmax, -10vmax); } }
 
-/* ---------- Suspended liquid-glass balls ---------- */
+/* ---------- Suspended liquid-glass sports balls (hanging on strings) ---------- */
 .balls { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-.ball {
+.hanger {
   position: absolute;
+  top: 0;
+  display: grid;
+  justify-items: center;
+  transform-origin: top center;
+  animation: sway 9s ease-in-out infinite alternate;
+}
+.string {
+  display: block;
+  width: 1px;
+  height: var(--len, 16vh);
+  background: linear-gradient(to bottom, rgba(12, 12, 20, 0.02), rgba(12, 12, 20, 0.25));
+}
+.sball {
+  position: relative;
+  display: block;
+  width: var(--d, 64px);
+  height: var(--d, 64px);
   border-radius: 50%;
   /* 3D shading: bright top-left highlight, darker lower rim */
   background: radial-gradient(circle at 32% 28%,
     rgba(255, 255, 255, 0.85),
     rgba(255, 255, 255, 0.22) 38%,
     rgba(255, 255, 255, 0.06) 62%,
-    rgba(12, 12, 20, 0.10) 100%);
+    rgba(12, 12, 20, 0.12) 100%);
   -webkit-backdrop-filter: blur(22px) saturate(150%);
   backdrop-filter: blur(22px) saturate(150%);
   border: 1px solid rgba(255, 255, 255, 0.6);
   box-shadow:
-    inset -10px -12px 24px rgba(12, 12, 20, 0.10),
-    inset 8px 10px 20px rgba(255, 255, 255, 0.65),
-    0 26px 44px rgba(12, 12, 20, 0.12);
-  animation: ball-float 14s ease-in-out infinite alternate;
+    inset -8px -10px 20px rgba(12, 12, 20, 0.10),
+    inset 6px 8px 16px rgba(255, 255, 255, 0.65),
+    0 22px 36px rgba(12, 12, 20, 0.12);
 }
-/* blurred trail — blur matches the liquid-glass backdrop value (22px) */
-.ball::after {
+/* sport seam lines */
+.sball::before {
   content: "";
   position: absolute;
-  left: 50%;
-  bottom: 62%;
-  width: 34%;
-  height: 250%;
-  transform: translateX(-50%);
-  background: linear-gradient(to top,
-    rgba(12, 12, 20, 0.14),
-    rgba(12, 12, 20, 0.05) 50%,
+  inset: 0;
+  border-radius: 50%;
+  opacity: 0.4;
+  background-size: 100% 100%;
+}
+.seam-basket::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%2315151c' stroke-width='2.4'%3E%3Cpath d='M50 0v100M0 50h100M16 9c12 13 12 69 0 82M84 9c-12 13-12 69 0 82'/%3E%3C/g%3E%3C/svg%3E"); }
+.seam-soccer::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%2315151c' stroke-width='2.4'%3E%3Cpath d='M50 32l17 12-6.5 20h-21L33 44zM50 32V14M67 44l16-7M60.5 64l10 14M39.5 64l-10 14M33 44l-16-7'/%3E%3C/g%3E%3C/svg%3E"); }
+.seam-volley::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%2315151c' stroke-width='2.4'%3E%3Cpath d='M8 36c26-14 60-14 86 2M14 70c22-26 52-34 80-22M36 6c-6 30 6 62 32 84'/%3E%3C/g%3E%3C/svg%3E"); }
+.seam-tennis::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%2315151c' stroke-width='2.4'%3E%3Cpath d='M24 5C56 28 56 72 24 95M76 5C44 28 44 72 76 95'/%3E%3C/g%3E%3C/svg%3E"); }
+.seam-cricket::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%2315151c' stroke-width='2.2'%3E%3Cpath d='M42 4C28 32 28 68 42 96M58 4c14 28 14 64 0 92' stroke-dasharray='5 4'/%3E%3C/g%3E%3C/svg%3E"); }
+/* horizontal dust trail — blur matches the liquid-glass backdrop value (22px) */
+.sball::after {
+  content: "";
+  position: absolute;
+  right: 65%;
+  top: 30%;
+  width: 420%;
+  height: 55%;
+  background: linear-gradient(to left,
+    rgba(12, 12, 20, 0.16),
+    rgba(12, 12, 20, 0.05) 55%,
     transparent);
   filter: blur(22px);
   border-radius: 999px;
-  z-index: -1;
 }
-.b1 { width: 150px; height: 150px; top: 14%;  left: 5%;   animation-duration: 16s; }
-.b2 { width: 84px;  height: 84px;  top: 32%;  right: 7%;  animation-duration: 12s; animation-delay: -4s; }
-.b3 { width: 210px; height: 210px; bottom: 16%; left: 10%; animation-duration: 19s; animation-delay: -8s; }
-.b4 { width: 64px;  height: 64px;  top: 58%;  left: 46%;  animation-duration: 11s; animation-delay: -2s; }
-.b5 { width: 120px; height: 120px; bottom: 7%; right: 16%; animation-duration: 15s; animation-delay: -10s; }
-.b6 { width: 52px;  height: 52px;  top: 9%;   right: 28%; animation-duration: 10s; animation-delay: -6s; }
-@keyframes ball-float {
-  from { transform: translateY(-18px) translateX(-6px) rotate(-2deg); }
-  to   { transform: translateY(22px)  translateX(8px)  rotate(2deg); }
+.h1 { left: 4%;  --len: 14vh; --d: 62px;  animation-duration: 10s; }
+.h2 { left: 18%; --len: 8vh;  --d: 46px;  animation-duration: 8s;  animation-delay: -3s; }
+.h3 { left: 33%; --len: 22vh; --d: 92px;  animation-duration: 12s; animation-delay: -6s; }
+.h4 { left: 49%; --len: 11vh; --d: 52px;  animation-duration: 9s;  animation-delay: -2s; }
+.h5 { left: 62%; --len: 27vh; --d: 104px; animation-duration: 13s; animation-delay: -8s; }
+.h6 { left: 78%; --len: 7vh;  --d: 42px;  animation-duration: 8s;  animation-delay: -5s; }
+.h7 { left: 90%; --len: 18vh; --d: 70px;  animation-duration: 11s; animation-delay: -4s; }
+@keyframes sway {
+  from { transform: rotate(-2.2deg); }
+  to   { transform: rotate(2.2deg); }
 }
 
 /* ---------- Liquid glass (light) ---------- */
@@ -477,7 +506,7 @@ select.field { appearance: none; }
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .orb, .logo-row, .shimmer::before, .ball { animation: none !important; }
+  .orb, .logo-row, .shimmer::before, .hanger { animation: none !important; }
   .reveal { opacity: 1; transform: none; transition: none; }
 }
 
@@ -495,9 +524,10 @@ select.field { appearance: none; }
   .logo-item { margin-right: 44px; }
 
   /* fewer, smaller glass balls on phones to keep scrolling smooth */
-  .b3, .b4, .b6 { display: none; }
-  .b1 { width: 96px; height: 96px; }
-  .b5 { width: 80px; height: 80px; }
+  .h3, .h4, .h6 { display: none; }
+  .h1 { --d: 48px; }
+  .h5 { --d: 70px; --len: 20vh; }
+  .h7 { --d: 52px; }
 
   /* mobile nav */
   .nav { padding: 0 10px 0 18px; gap: 10px; }
