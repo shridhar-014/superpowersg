@@ -66,6 +66,54 @@ body {
 @keyframes drift-b { to { transform: translate(10vmax, -8vmax) scale(1.06); } }
 @keyframes drift-c { to { transform: translate(-12vmax, -10vmax); } }
 
+/* ---------- Suspended liquid-glass balls ---------- */
+.balls { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.ball {
+  position: absolute;
+  border-radius: 50%;
+  /* 3D shading: bright top-left highlight, darker lower rim */
+  background: radial-gradient(circle at 32% 28%,
+    rgba(255, 255, 255, 0.85),
+    rgba(255, 255, 255, 0.22) 38%,
+    rgba(255, 255, 255, 0.06) 62%,
+    rgba(12, 12, 20, 0.10) 100%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  backdrop-filter: blur(22px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    inset -10px -12px 24px rgba(12, 12, 20, 0.10),
+    inset 8px 10px 20px rgba(255, 255, 255, 0.65),
+    0 26px 44px rgba(12, 12, 20, 0.12);
+  animation: ball-float 14s ease-in-out infinite alternate;
+}
+/* blurred trail — blur matches the liquid-glass backdrop value (22px) */
+.ball::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 62%;
+  width: 34%;
+  height: 250%;
+  transform: translateX(-50%);
+  background: linear-gradient(to top,
+    rgba(12, 12, 20, 0.14),
+    rgba(12, 12, 20, 0.05) 50%,
+    transparent);
+  filter: blur(22px);
+  border-radius: 999px;
+  z-index: -1;
+}
+.b1 { width: 150px; height: 150px; top: 14%;  left: 5%;   animation-duration: 16s; }
+.b2 { width: 84px;  height: 84px;  top: 32%;  right: 7%;  animation-duration: 12s; animation-delay: -4s; }
+.b3 { width: 210px; height: 210px; bottom: 16%; left: 10%; animation-duration: 19s; animation-delay: -8s; }
+.b4 { width: 64px;  height: 64px;  top: 58%;  left: 46%;  animation-duration: 11s; animation-delay: -2s; }
+.b5 { width: 120px; height: 120px; bottom: 7%; right: 16%; animation-duration: 15s; animation-delay: -10s; }
+.b6 { width: 52px;  height: 52px;  top: 9%;   right: 28%; animation-duration: 10s; animation-delay: -6s; }
+@keyframes ball-float {
+  from { transform: translateY(-18px) translateX(-6px) rotate(-2deg); }
+  to   { transform: translateY(22px)  translateX(8px)  rotate(2deg); }
+}
+
 /* ---------- Liquid glass (light) ---------- */
 .glass {
   background: var(--glass);
@@ -429,7 +477,7 @@ select.field { appearance: none; }
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .orb, .logo-row, .shimmer::before { animation: none !important; }
+  .orb, .logo-row, .shimmer::before, .ball { animation: none !important; }
   .reveal { opacity: 1; transform: none; transition: none; }
 }
 
@@ -445,6 +493,11 @@ select.field { appearance: none; }
   .form-grid { grid-template-columns: 1fr; }
   .section { padding: 52px 18px; }
   .logo-item { margin-right: 44px; }
+
+  /* fewer, smaller glass balls on phones to keep scrolling smooth */
+  .b3, .b4, .b6 { display: none; }
+  .b1 { width: 96px; height: 96px; }
+  .b5 { width: 80px; height: 80px; }
 
   /* mobile nav */
   .nav { padding: 0 10px 0 18px; gap: 10px; }
