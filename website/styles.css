@@ -145,8 +145,10 @@ body {
 
 /* ---------- Typography helpers ---------- */
 .script { font-family: var(--font-script); font-weight: 400; }
-.grad-text {
-  background: linear-gradient(100deg, #0c0c0e 30%, var(--acc-1) 78%, var(--acc-2));
+.grad-text { color: var(--text); }
+/* gradient lettering reserved for the Coming Soon headline only */
+.coming-soon .grad-text {
+  background: linear-gradient(100deg, #0c0c0e 25%, var(--acc-1) 70%, var(--acc-2));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
