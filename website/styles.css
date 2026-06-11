@@ -19,7 +19,6 @@
   --radius: 20px;
   --nav-h: 64px;
   --font-body: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-script: "Style Script", "Brush Script MT", cursive;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -107,7 +106,6 @@ body {
 }
 
 /* ---------- Typography helpers ---------- */
-.script { font-family: var(--font-script); font-weight: 400; }
 .grad-text { color: var(--text); }
 /* gradient lettering reserved for the Coming Soon headline only */
 .coming-soon .grad-text {
@@ -201,14 +199,6 @@ main { position: relative; z-index: 1; }
   display: block;
   width: min(430px, 100%);
   height: auto;
-}
-.hero-line {
-  display: block;
-  font-size: clamp(1.6rem, 4.5vw, 2.6rem);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  margin-top: 14px;
-  color: var(--muted);
 }
 .tagline { margin-top: 16px; }
 .tagline-img {
