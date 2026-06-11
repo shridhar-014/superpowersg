@@ -64,6 +64,45 @@
     if (history.replaceState) history.replaceState(null, "", location.pathname + location.hash);
   }
 
+  /* ---------- Lightbox: tap a gallery photo to enlarge ---------- */
+  (function lightbox() {
+    var lb = $("#lightbox");
+    if (!lb) return;
+    var lbImg = $("#lightboxImg");
+    var lbCap = $("#lightboxCap");
+
+    function close() {
+      lb.hidden = true;
+      document.body.style.overflow = "";
+    }
+    $$(".gallery-tile.has-photo").forEach(function (fig) {
+      fig.setAttribute("role", "button");
+      fig.setAttribute("tabindex", "0");
+      fig.setAttribute("aria-label", "Enlarge photo");
+      function open() {
+        var img = fig.querySelector("img");
+        if (!img) return;
+        lbImg.src = img.src;
+        lbImg.alt = img.alt;
+        var strong = fig.querySelector("figcaption strong");
+        var span = fig.querySelector("figcaption span");
+        lbCap.textContent = (strong ? strong.textContent : "") + (span ? " — " + span.textContent : "");
+        lb.hidden = false;
+        document.body.style.overflow = "hidden";
+      }
+      fig.addEventListener("click", open);
+      fig.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); }
+      });
+    });
+    lb.addEventListener("click", function (e) {
+      if (e.target !== lbImg) close();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !lb.hidden) close();
+    });
+  })();
+
   /* ============================================================
      Keep-Up Challenge — tap the ball, don't let it drop
      ============================================================ */

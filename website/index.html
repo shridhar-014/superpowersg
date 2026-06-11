@@ -28,17 +28,6 @@
     <span class="orb orb-c"></span>
   </div>
 
-  <!-- Suspended liquid-glass sports balls hanging on strings -->
-  <div class="balls" aria-hidden="true">
-    <span class="hanger h1"><i class="string"></i><i class="sball seam-basket"></i></span>
-    <span class="hanger h2"><i class="string"></i><i class="sball seam-soccer"></i></span>
-    <span class="hanger h3"><i class="string"></i><i class="sball seam-volley"></i></span>
-    <span class="hanger h4"><i class="string"></i><i class="sball seam-tennis"></i></span>
-    <span class="hanger h5"><i class="string"></i><i class="sball seam-basket"></i></span>
-    <span class="hanger h6"><i class="string"></i><i class="sball seam-cricket"></i></span>
-    <span class="hanger h7"><i class="string"></i><i class="sball seam-soccer"></i></span>
-  </div>
-
   <!-- ============ NAV ============ -->
   <header class="nav glass" id="top">
     <a class="nav-brand" href="#top">
@@ -62,7 +51,7 @@
     <!-- ============ HERO ============ -->
     <section class="hero" id="home">
       <div class="hero-copy">
-        <p class="eyebrow reveal">Ranchi · Kolkata · India</p>
+        <p class="eyebrow reveal">Sportswear · Equipment · Custom Teamwear</p>
         <h1 class="reveal">
           <img class="hero-wordmark" src="assets/brand/wordmark.svg" alt="Jaypee Sports" width="374" height="82">
           <span class="hero-line">Built for every game.</span>
@@ -101,7 +90,7 @@
     <section class="section" id="about">
       <div class="section-head reveal">
         <p class="eyebrow">About us</p>
-        <h2>The house behind the <span class="grad-text">jersey</span></h2>
+        <h2>The story behind the <span class="grad-text">brand</span></h2>
       </div>
       <div class="about-grid">
         <!-- PLACEHOLDER COPY: replace with the real story from "jaypee-sports-about-us.pdf" -->
@@ -149,7 +138,7 @@
     <section class="section" id="clients">
       <div class="section-head reveal">
         <p class="eyebrow">Our works</p>
-        <h2>Teams &amp; institutions <span class="grad-text">we kit out</span></h2>
+        <h2>Our <span class="grad-text">clients</span></h2>
         <p class="section-sub">A few of the clients who wear Jaypee.</p>
       </div>
 
@@ -199,8 +188,8 @@
     <section class="section" id="world-stage">
       <div class="section-head reveal">
         <p class="eyebrow">On the world stage</p>
-        <h2>Where our gear has <span class="grad-text">played</span></h2>
-        <p class="section-sub">Jaypee sportswear at the Commonwealth Games, National Games and international events.</p>
+        <h2>Jaypee at the <span class="grad-text">games</span></h2>
+        <p class="section-sub">Our sportswear at the National Games, international events and beyond. Tap any photo to enlarge.</p>
       </div>
       <!--
         PLACEHOLDER GALLERY: drop the final 8K photos in as
@@ -276,17 +265,13 @@
           <span class="product-ico grad-b" aria-hidden="true">🏏</span>
           <h3>Sports Equipment — every sport</h3>
           <p>Gear across disciplines, all under one roof.</p>
-          <ul class="chips" aria-label="Sports covered">
-            <li>Cricket</li><li>Football</li><li>Hockey</li><li>Badminton</li>
-            <li>Athletics</li><li>Basketball</li><li>Volleyball</li><li>Tennis</li>
-            <li>Table&nbsp;Tennis</li><li>Kabaddi</li><li>Swimming</li><li>&amp; more</li>
-          </ul>
+          <p class="sports-line">Cricket | Football | Hockey | Badminton | Athletics | Basketball | Volleyball | Tennis | Table&nbsp;Tennis | Kabaddi | Swimming &amp; more</p>
         </article>
-        <article class="glass card product product-cta reveal">
+        <article class="glass card product product-feature reveal">
           <span class="product-ico grad-c" aria-hidden="true">🎽</span>
           <h3>Made to order</h3>
-          <p>Custom teamwear designed around your team's identity.</p>
-          <a class="btn btn-ghost" href="#teamwear">How it works →</a>
+          <p>Custom teamwear designed around your team's identity — from the first design consult to full squad delivery, manufactured in-house.</p>
+          <a class="btn btn-primary" href="#teamwear">How it works →</a>
         </article>
       </div>
     </section>
@@ -295,7 +280,7 @@
     <section class="section" id="teamwear">
       <div class="section-head reveal">
         <p class="eyebrow">Custom teamwear manufacturing</p>
-        <h2>Your team. Your colours. <span class="grad-text">Stitched by Jaypee.</span></h2>
+        <h2>Made by <span class="grad-text">Jaypee Sports</span></h2>
         <p class="section-sub">
           We customise jerseys and full kits for college teams, clubs, academies, offices —
           any team ready to put their foot in sports. Small squads welcome.
@@ -410,7 +395,7 @@
     <section class="section" id="contact">
       <div class="section-head reveal">
         <p class="eyebrow">Contact us</p>
-        <h2>Talk to <span class="grad-text">Jaypee</span></h2>
+        <h2>Get in <span class="grad-text">touch</span></h2>
       </div>
       <div class="contact-grid">
         <a class="glass card contact-card reveal" href="tel:+919155142770">
@@ -450,6 +435,15 @@
   </footer>
 
   <div class="toast glass" id="toast" role="status" hidden></div>
+
+  <!-- Photo lightbox -->
+  <div class="lightbox" id="lightbox" hidden>
+    <button class="lightbox-close" id="lightboxClose" aria-label="Close photo">×</button>
+    <figure>
+      <img id="lightboxImg" src="" alt="">
+      <figcaption id="lightboxCap"></figcaption>
+    </figure>
+  </div>
 
   <script src="script.js" defer></script>
 </body>
