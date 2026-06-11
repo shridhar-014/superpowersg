@@ -111,6 +111,22 @@ body {
   transform: translate3d(calc(var(--scroll) * 14vw), calc(var(--scroll) * -48vh), 0) rotate(calc(var(--scroll) * 60deg));
 }
 
+/* ---------- Sketch athletes band (scroll-engaged) ---------- */
+.bg-sketch {
+  position: fixed;
+  left: 0; right: 0; bottom: -4vh;
+  height: min(52vh, 560px);
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("assets/brand/bg-athletes.webp");
+  background-size: cover;
+  background-position: center bottom;
+  mix-blend-mode: multiply; /* melts the artwork's white into the page */
+  opacity: calc(0.3 + var(--scroll) * 0.55);
+  transform: translate3d(calc(var(--scroll) * -4vw), calc(var(--scroll) * -3vh), 0) scale(calc(1.06 + var(--scroll) * 0.06));
+  will-change: transform, opacity;
+}
+
 /* ---------- Liquid glass (light) ---------- */
 .glass {
   background: var(--glass);

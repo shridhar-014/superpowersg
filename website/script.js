@@ -139,11 +139,11 @@
     try { best = parseInt(localStorage.getItem("jp-best"), 10) || 0; } catch (e) {}
     if (bestEl) bestEl.textContent = best;
 
-    /* Rewards — confirm/adjust tiers with the store before promoting widely */
+    /* Rewards — difficulty ramps up so these demand real skill */
     var REWARDS = [
-      { score: 50, code: "CHAMP15", label: "15% off custom teamwear" },
-      { score: 30, code: "JAYPEE10", label: "10% off custom teamwear" },
-      { score: 15, code: "JAYPEE5", label: "5% off custom teamwear" }
+      { score: 75, code: "CHAMP15", label: "15% off custom teamwear" },
+      { score: 40, code: "JAYPEE10", label: "10% off custom teamwear" },
+      { score: 20, code: "JAYPEE5", label: "5% off custom teamwear" }
     ];
     function rewardFor(s) {
       for (var i = 0; i < REWARDS.length; i++) if (s >= REWARDS[i].score) return REWARDS[i];
@@ -188,8 +188,9 @@
 
     var state = "idle"; // idle | play | over
     var ball = { x: 0, y: 0, vx: 0, vy: 0, r: 26, spin: 0 };
+    var baseR = 26;
     var score = 0;
-    var gravity = 0.36;
+    var gravity = 0.36; // base value — effective gravity climbs with score
     var particles = [];
     var running = true;
     var rafId = null;
@@ -203,7 +204,8 @@
       canvas.width = Math.round(W * DPR);
       canvas.height = Math.round(H * DPR);
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-      ball.r = Math.max(20, Math.min(30, W * 0.085));
+      baseR = Math.max(20, Math.min(30, W * 0.085));
+      ball.r = baseR;
       if (state !== "play") rest();
     }
 
@@ -213,6 +215,7 @@
       ball.vx = 0;
       ball.vy = 0;
       ball.spin = 0;
+      ball.r = baseR;
     }
 
     function start() {
@@ -225,7 +228,10 @@
     function kick(px, py) {
       ball.vy = -(H * 0.015 + 3.2);
       var dx = ball.x - px;
-      ball.vx = Math.max(-3.2, Math.min(3.2, dx * 0.12 + (Math.random() - 0.5) * 1.4));
+      // sideways chaos grows with score so rhythm alone can't win
+      var chaos = 1.4 + Math.min(score, 60) * 0.055;
+      var cap = 3.2 + Math.min(score, 60) * 0.025;
+      ball.vx = Math.max(-cap, Math.min(cap, dx * 0.12 + (Math.random() - 0.5) * chaos));
       ball.spin += ball.vx * 0.02;
       for (var i = 0; i < 7; i++) {
         particles.push({
@@ -240,9 +246,12 @@
     function tap(px, py) {
       if (state !== "play") { start(); return; }
       var dx = px - ball.x, dy = py - ball.y;
-      var reach = ball.r + Math.max(26, ball.r); // generous thumb-sized hitbox
+      // hitbox forgiveness tightens as the score climbs
+      var reach = ball.r + Math.max(8, 26 - score * 0.3);
       if (dx * dx + dy * dy <= reach * reach) {
         score++;
+        // ball shrinks with success — precision required at high scores
+        ball.r = baseR * Math.max(0.62, 1 - score * 0.006);
         kick(px, py);
         if (score > best) {
           best = score;
@@ -347,7 +356,8 @@
       ctx.clearRect(0, 0, W, H);
 
       if (state === "play") {
-        ball.vy += gravity * dt;
+        // effective gravity climbs with score: faster drops, less think time
+        ball.vy += gravity * (1 + Math.min(score, 80) * 0.02) * dt;
         ball.x += ball.vx * dt;
         ball.y += ball.vy * dt;
         ball.spin += ball.vx * 0.004 * dt;
