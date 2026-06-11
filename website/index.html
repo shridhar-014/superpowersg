@@ -97,7 +97,8 @@
   <!-- Grain overlay (premium gradient + film grain) -->
   <div class="grain" aria-hidden="true"></div>
 
-  <!-- Floating gradient orbs that sit behind everything -->
+  <!-- Scroll-reactive aurora + parallax orbs behind everything -->
+  <div class="aurora" aria-hidden="true"></div>
   <div class="orbs" aria-hidden="true">
     <span class="orb orb-a"></span>
     <span class="orb orb-b"></span>
@@ -159,7 +160,9 @@
         </div>
         <canvas id="gameCanvas" aria-label="Keep-up football juggling game. Tap the ball to keep it in the air."></canvas>
         <noscript><p class="game-hint">Enable JavaScript to play the keep-up game.</p></noscript>
-        <p class="game-hint">Tap the ball. Don't let it drop. 🏆</p>
+        <p class="game-hint">Tap the ball. Don't let it drop — rewards await. 🎁</p>
+        <p class="game-rewards">15 = 5% off · 30 = 10% off · 50 = 15% off custom teamwear</p>
+        <p class="game-reward-earned" id="gameReward" hidden></p>
       </div>
     </section>
 
@@ -395,6 +398,7 @@
         <input type="hidden" name="_captcha" value="false">
         <input type="hidden" name="_template" value="table">
         <input type="hidden" name="_next" id="formNext" value="https://jaypeesports.in/?submitted=1#teamwear">
+        <input type="hidden" name="reward_code" id="rewardCode" value="">
         <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
 
         <div class="form-grid">
@@ -418,6 +422,7 @@
         <label class="form-full">Anything else? (colours, deadline, budget)
           <textarea class="field" name="message" rows="3"></textarea>
         </label>
+        <p class="reward-note" id="rewardNote" hidden>🎁 Game reward applied: <span></span></p>
         <button class="btn btn-primary" type="submit">Send enquiry</button>
         <p class="enquiry-fine">We typically reply within 1–2 working days.</p>
       </form>

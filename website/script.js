@@ -64,6 +64,21 @@
     if (history.replaceState) history.replaceState(null, "", location.pathname + location.hash);
   }
 
+  /* ---------- Scroll progress drives the aurora background ---------- */
+  (function scrollAurora() {
+    var doc = document.documentElement;
+    var ticking = false;
+    function update() {
+      var max = doc.scrollHeight - window.innerHeight;
+      doc.style.setProperty("--scroll", max > 0 ? (window.scrollY / max).toFixed(4) : 0);
+      ticking = false;
+    }
+    window.addEventListener("scroll", function () {
+      if (!ticking) { requestAnimationFrame(update); ticking = true; }
+    }, { passive: true });
+    update();
+  })();
+
   /* ---------- Lightbox: tap a gallery photo to enlarge ---------- */
   (function lightbox() {
     var lb = $("#lightbox");
@@ -123,6 +138,53 @@
     var best = 0;
     try { best = parseInt(localStorage.getItem("jp-best"), 10) || 0; } catch (e) {}
     if (bestEl) bestEl.textContent = best;
+
+    /* Rewards — confirm/adjust tiers with the store before promoting widely */
+    var REWARDS = [
+      { score: 50, code: "CHAMP15", label: "15% off custom teamwear" },
+      { score: 30, code: "JAYPEE10", label: "10% off custom teamwear" },
+      { score: 15, code: "JAYPEE5", label: "5% off custom teamwear" }
+    ];
+    function rewardFor(s) {
+      for (var i = 0; i < REWARDS.length; i++) if (s >= REWARDS[i].score) return REWARDS[i];
+      return null;
+    }
+    function showReward() {
+      var code = null, label = null;
+      try {
+        code = localStorage.getItem("jp-reward-code");
+        label = localStorage.getItem("jp-reward-label");
+      } catch (e) {}
+      if (!code) return;
+      var el = $("#gameReward");
+      if (el) {
+        el.hidden = false;
+        el.innerHTML = '🎁 Earned: <strong>' + code + '</strong> — ' + label + '. <a href="#teamwear">Use it in your enquiry →</a>';
+      }
+      var hidden = $("#rewardCode");
+      if (hidden) hidden.value = code + " (" + label + ")";
+      var note = $("#rewardNote");
+      if (note) {
+        note.hidden = false;
+        note.querySelector("span").textContent = code + " — " + label;
+      }
+    }
+    function onGameOver(s) {
+      var r = rewardFor(s);
+      if (!r) return;
+      var prev = 0;
+      try { prev = parseInt(localStorage.getItem("jp-reward-score"), 10) || 0; } catch (e) {}
+      if (s > prev) {
+        try {
+          localStorage.setItem("jp-reward-code", r.code);
+          localStorage.setItem("jp-reward-label", r.label);
+          localStorage.setItem("jp-reward-score", String(s));
+        } catch (e) {}
+        toast("🎁 You earned " + r.code + " — " + r.label + "!");
+      }
+      showReward();
+    }
+    showReward();
 
     var state = "idle"; // idle | play | over
     var ball = { x: 0, y: 0, vx: 0, vy: 0, r: 26, spin: 0 };
@@ -296,6 +358,7 @@
         // floor = drop
         if (ball.y > H + ball.r * 2) {
           state = "over";
+          onGameOver(score);
         }
         text(String(score));
       } else if (state === "idle") {
@@ -303,7 +366,8 @@
         ball.y = H * 0.42 + Math.sin(Date.now() / 600) * 6;
         text("Keep-ups", "Tap the ball to start");
       } else if (state === "over") {
-        text("Dropped at " + score + "!", "Tap to try again");
+        var r = rewardFor(score);
+        text("Dropped at " + score + "!", (r ? "🎁 Earned " + r.code + " · " : "") + "Tap to try again");
       }
 
       drawParticles(dt);
