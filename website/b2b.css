@@ -1,6 +1,6 @@
 /* Jaypee Sports — B2B ordering styles */
 
-.b2b-intro { padding-bottom: 20px; }
+.b2b-intro { padding-top: calc(var(--nav-h) + 56px); padding-bottom: 20px; }
 .b2b-intro h1 { font-size: clamp(2rem, 6vw, 3rem); letter-spacing: -0.02em; }
 .b2b-beta {
   margin-top: 14px;
@@ -153,7 +153,72 @@
   .designer { grid-template-columns: 1fr; padding: 18px; }
   .route-grid { grid-template-columns: 1fr; }
   .cart-row-side { width: 100%; justify-content: space-between; }
+  .size-grid { grid-template-columns: repeat(3, 1fr); }
 }
 @media (min-width: 901px) and (max-width: 1100px) {
   .eq-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ---------- v2 additions ---------- */
+
+/* per-size quantity grid */
+.size-grid-wrap { display: grid; gap: 8px; }
+.size-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.size-cell { display: grid; gap: 4px; text-align: center; font-size: 0.8rem; font-weight: 700; color: var(--muted); }
+.size-cell input { width: 100%; padding: 8px 6px; text-align: center; border: 1px solid var(--line); border-radius: 10px; background: #fff; font: 600 0.9rem var(--font-body); }
+.size-total { font-size: 0.82rem; color: var(--muted); }
+
+/* collapsible printing */
+.print-toggle { justify-self: start; padding: 9px 16px; font-size: 0.85rem; }
+
+/* layered mockup stage (photo base + print-area layers) */
+.mock-stage { position: relative; width: min(320px, 100%); aspect-ratio: 200 / 220; margin: 0 auto; }
+.stage-base, .mock-stage img.stage-base { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.stage-base svg { width: 100%; height: 100%; filter: drop-shadow(0 14px 26px rgba(12, 12, 20, 0.16)); }
+.stage-area {
+  position: absolute;
+  border: 2px dashed var(--acc-1);
+  background: rgba(124, 58, 237, 0.12);
+  border-radius: 4px;
+  display: grid; place-items: center;
+  overflow: visible;
+}
+.stage-area img { width: 100%; height: 100%; object-fit: contain; }
+.stage-tag {
+  position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+  font-size: 0.62rem; font-weight: 700; color: var(--acc-1);
+  background: rgba(255, 255, 255, 0.85); padding: 0 5px; border-radius: 4px;
+}
+
+/* roster (name & number) */
+.roster-row { display: grid; grid-template-columns: 1fr 72px 32px; gap: 8px; margin-bottom: 8px; align-items: center; }
+.roster-row .field { padding: 9px 10px; font-size: 0.85rem; }
+
+/* design gallery */
+.design-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.design-card {
+  display: grid; gap: 6px; justify-items: center;
+  padding: 12px 8px;
+  border: 1px solid var(--line); border-radius: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  font: 600 0.72rem var(--font-body); color: var(--muted);
+  cursor: pointer; text-align: center;
+  transition: transform 0.15s;
+}
+.design-card:hover { transform: translateY(-2px); }
+.design-card.active { outline: 2px solid #0c0c0e; outline-offset: 1px; color: var(--text); }
+.design-thumb {
+  width: 100%; aspect-ratio: 4 / 3;
+  display: grid; place-items: center;
+  border-radius: 8px;
+  background: repeating-linear-gradient(115deg, #ececf2 0 10px, #f7f7fa 10px 20px);
+  font-size: 0.85rem; font-weight: 700; color: var(--text);
+}
+.design-card.consult { grid-column: 1 / -1; }
+.design-card.consult .design-thumb { aspect-ratio: auto; padding: 8px; background: rgba(124, 58, 237, 0.1); color: var(--acc-1); }
+
+/* review */
+.review-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.review-table th { text-align: left; color: var(--muted); font-weight: 600; padding: 8px 12px 8px 0; vertical-align: top; white-space: nowrap; }
+.review-table td { padding: 8px 0; border-bottom: 1px solid var(--line); }
+.review-table tr:last-child td { border-bottom: none; font-weight: 700; }
