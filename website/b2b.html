@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>B2B Order — Jaypee Sports | Bulk Sportswear, Uniforms &amp; Equipment</title>
+  <meta name="description" content="Bulk B2B ordering from Jaypee Sports: sportswear, corporate & school uniforms, and sports equipment with custom printing and in-house manufacturing.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://jaypeesports.in/b2b.html">
+  <meta name="theme-color" content="#fafafa">
+  <link rel="icon" type="image/svg+xml" href="assets/brand/favicon.svg">
+  <link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=20260612e">
+  <link rel="stylesheet" href="b2b.css?v=1">
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0HHJSJ3TM8"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-0HHJSJ3TM8');
+  </script>
+</head>
+<body>
+
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav glass" id="top">
+    <a class="nav-brand" href="index.html">
+      <img class="nav-logo" src="assets/brand/jp-logo.svg" alt="Jaypee Sports" width="595" height="270">
+    </a>
+    <nav class="nav-links b2b-nav-links" aria-label="Primary">
+      <a href="index.html">← Back to site</a>
+    </nav>
+    <button class="btn btn-primary nav-cta" id="cartBtn" type="button">Cart · <span id="cartCount">0</span></button>
+  </header>
+
+  <main id="main">
+
+    <!-- ============ INTRO ============ -->
+    <section class="section b2b-intro">
+      <p class="eyebrow">For institutions, clubs &amp; teams</p>
+      <h1>B2B <span class="grad-text">Order</span></h1>
+      <p class="section-sub">
+        Bulk ordering with in-house manufacturing, custom printing and quantity-based pricing.
+        Build your order below — the final bill is sent to your email or WhatsApp.
+      </p>
+      <p class="b2b-beta">⚠ Pilot section — prices shown are indicative and confirmed by our team before billing.</p>
+    </section>
+
+    <!-- ============ STEP 1: CATEGORY ============ -->
+    <section class="section b2b-section" id="categoryStep">
+      <h2 class="b2b-step-title"><span class="b2b-step-num">1</span> Select your order category</h2>
+      <div class="cat-grid" id="catGrid">
+        <label class="glass cat-card">
+          <input type="checkbox" name="category" value="sportswear">
+          <span class="cat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 3 4 5l1.5 3.5 2-0.7V21h9V7.8l2 .7L20 5l-4-2c0 1.2-1.5 2.2-4 2.2S8 4.2 8 3Z"/></svg></span>
+          <strong>Sportswear</strong>
+          <span class="cat-sub">Jerseys, athletic wear, tracksuits — in-house manufacturing</span>
+        </label>
+        <label class="glass cat-card">
+          <input type="checkbox" name="category" value="corporate">
+          <span class="cat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2 4 6v2h16V6l-8-4zm-7 8v9h4v-6h6v6h4v-9H5z"/></svg></span>
+          <strong>Corporate / Uniform wear</strong>
+          <span class="cat-sub">T-shirts, tracksuits, caps, school uniforms — in-house manufacturing</span>
+        </label>
+        <label class="glass cat-card">
+          <input type="checkbox" name="category" value="equipment">
+          <span class="cat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15.05 12.81 6.56 4.32a1.96 1.96 0 0 0-2.78 0c-.77.77-.77 2.01 0 2.78l8.49 8.49 2.78-2.78zm2.46 2.46-2.78 2.78 2.12 2.12c.77.77 2.01.77 2.78 0 .77-.77.77-2.01 0-2.78l-2.12-2.12zM18.5 2a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/></svg></span>
+          <strong>Sports Equipment</strong>
+          <span class="cat-sub">Balls, bats, sticks &amp; more — with optional name printing</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- ============ DYNAMIC FLOW ============ -->
+    <section class="section b2b-section" id="flowRoot" hidden></section>
+
+    <!-- ============ CART / CHECKOUT ============ -->
+    <section class="section b2b-section" id="cartSection" hidden>
+      <h2 class="b2b-step-title"><span class="b2b-step-num">🛒</span> Your order</h2>
+      <div id="cartItems" class="cart-items"></div>
+      <div class="glass cart-summary" id="cartSummary"></div>
+
+      <form class="glass enquiry b2b-checkout" id="checkoutForm" hidden>
+        <h3>Where should we send the bill?</h3>
+        <div class="form-grid">
+          <label>Your name<input class="field" type="text" name="name" required autocomplete="name"></label>
+          <label>Institution / team<input class="field" type="text" name="org" required></label>
+          <label>Phone / WhatsApp<input class="field" type="tel" name="phone" required autocomplete="tel"></label>
+          <label>Email<input class="field" type="email" name="email" required autocomplete="email"></label>
+        </div>
+        <label class="b2b-consent">
+          <input type="checkbox" id="orderConsent" required>
+          <span>I confirm the order details are correct and that I own, or hold rights to, all names and logos
+          submitted for printing. I authorise Jaypee Sports to reproduce them solely for this order.
+          Indicative prices are subject to confirmation.</span>
+        </label>
+        <button class="btn btn-primary" type="submit">Place order &amp; send bill</button>
+        <p class="enquiry-fine">The bill is emailed to you instantly; our team confirms within 1–2 working days. Logos/artwork files are collected by email or WhatsApp after the order.</p>
+      </form>
+
+      <div class="glass order-success" id="orderSuccess" hidden></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p class="footer-fine">© <span id="year">2026</span> Jaypee Sports Sales Pvt. Ltd. · Ranchi · Kolkata · <a href="index.html">jaypeesports.in</a></p>
+  </footer>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <script src="b2b.js?v=1" defer></script>
+</body>
+</html>
