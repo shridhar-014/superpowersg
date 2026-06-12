@@ -149,7 +149,9 @@
     try { best = parseInt(localStorage.getItem("jp-best"), 10) || 0; } catch (e) {}
     if (bestEl) bestEl.textContent = best;
 
-    /* Rewards — difficulty ramps up so these demand real skill */
+    /* Rewards — difficulty ramps up so these demand real skill.
+       Codes are month-stamped (e.g. CHAMP15-JUN26) and expire when
+       the month turns; claiming requires an email address. */
     var REWARDS = [
       { score: 75, code: "CHAMP15", label: "15% off custom teamwear" },
       { score: 40, code: "JAYPEE10", label: "10% off custom teamwear" },
@@ -159,18 +161,35 @@
       for (var i = 0; i < REWARDS.length; i++) if (s >= REWARDS[i].score) return REWARDS[i];
       return null;
     }
-    function showReward() {
-      var code = null, label = null;
+    function monthTag() {
+      var M = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+      var d = new Date();
+      return M[d.getMonth()] + String(d.getFullYear() % 100);
+    }
+    function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+    function read(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+    function clearReward() {
       try {
-        code = localStorage.getItem("jp-reward-code");
-        label = localStorage.getItem("jp-reward-label");
+        ["jp-reward-claimed", "jp-reward-label", "jp-reward-pending", "jp-reward-month", "jp-reward-score"]
+          .forEach(function (k) { localStorage.removeItem(k); });
       } catch (e) {}
+    }
+    // auto-expire: anything earned in a previous month is wiped
+    if (read("jp-reward-month") && read("jp-reward-month") !== monthTag()) clearReward();
+
+    var claimForm = $("#gameClaim");
+    var rewardEl = $("#gameReward");
+
+    function showClaimed() {
+      var code = read("jp-reward-claimed");
+      var label = read("jp-reward-label");
       if (!code) return;
-      var el = $("#gameReward");
-      if (el) {
-        el.hidden = false;
-        el.innerHTML = '🎁 Earned: <strong>' + code + '</strong> — ' + label + '. <a href="#teamwear">Use it in your enquiry →</a>';
+      if (rewardEl) {
+        rewardEl.hidden = false;
+        rewardEl.innerHTML = '🎁 Your code: <strong>' + code + '</strong> — ' + label +
+          ' (valid this month). <a href="#teamwear">Use it in your enquiry →</a>';
       }
+      if (claimForm) claimForm.hidden = true;
       var hidden = $("#rewardCode");
       if (hidden) hidden.value = code + " (" + label + ")";
       var note = $("#rewardNote");
@@ -179,23 +198,73 @@
         note.querySelector("span").textContent = code + " — " + label;
       }
     }
+    function showPending() {
+      var pending = null;
+      try { pending = JSON.parse(read("jp-reward-pending")); } catch (e) {}
+      if (!pending || read("jp-reward-claimed")) return;
+      if (rewardEl) {
+        rewardEl.hidden = false;
+        rewardEl.innerHTML = '🎁 You earned <strong>' + pending.label + '</strong>! Enter your email to get the code:';
+      }
+      if (claimForm) claimForm.hidden = false;
+    }
     function onGameOver(s) {
       var r = rewardFor(s);
       if (!r) return;
-      var prev = 0;
-      try { prev = parseInt(localStorage.getItem("jp-reward-score"), 10) || 0; } catch (e) {}
+      var prev = parseInt(read("jp-reward-score"), 10) || 0;
       if (s > prev) {
-        try {
-          localStorage.setItem("jp-reward-code", r.code);
-          localStorage.setItem("jp-reward-label", r.label);
-          localStorage.setItem("jp-reward-score", String(s));
-        } catch (e) {}
-        toast("🎁 You earned " + r.code + " — " + r.label + "!");
+        store("jp-reward-score", String(s));
+        store("jp-reward-month", monthTag());
+        store("jp-reward-pending", JSON.stringify({ base: r.code, label: r.label, score: s }));
+        // a better tier than an already-claimed code reopens the claim
+        if (read("jp-reward-claimed") && read("jp-reward-claimed").indexOf(r.code) !== 0) {
+          try { localStorage.removeItem("jp-reward-claimed"); } catch (e) {}
+        }
+        toast("🎁 You earned " + r.label + " — claim it below!");
         track("game_reward", { code: r.code, score: s });
       }
-      showReward();
+      if (read("jp-reward-claimed")) showClaimed(); else showPending();
     }
-    showReward();
+    if (claimForm) {
+      claimForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var emailInput = $("#claimEmail");
+        if (!emailInput || !emailInput.checkValidity()) { if (emailInput) emailInput.reportValidity(); return; }
+        var pending = null;
+        try { pending = JSON.parse(read("jp-reward-pending")); } catch (e2) {}
+        if (!pending) return;
+        var code = pending.base + "-" + monthTag();
+        var btn = claimForm.querySelector("button");
+        if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+        // lead lands in the store inbox; player gets the code by auto-reply
+        fetch("https://formsubmit.co/ajax/shridhar.govind14.sg@gmail.com", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify({
+            email: emailInput.value,
+            game_score: String(pending.score),
+            reward_code: code + " (" + pending.label + ")",
+            _subject: "Game reward claimed — jaypeesports.in",
+            _template: "table",
+            _captcha: "false",
+            _autoresponse: "Congratulations! Your Jaypee Sports reward code is " + code + " — " +
+              pending.label + ". Valid this month only, on custom teamwear orders (one per customer). " +
+              "Mention this code in your enquiry at jaypeesports.in or in store. — Jaypee Sports, Quality Par Excellence"
+          })
+        }).catch(function () { /* player still gets the code on screen */ })
+          .finally(function () {
+            store("jp-reward-claimed", code);
+            store("jp-reward-label", pending.label);
+            store("jp-reward-month", monthTag());
+            if (btn) { btn.disabled = false; btn.textContent = "Get my code"; }
+            showClaimed();
+            toast("🎁 Code " + code + " is yours — also sent to your email");
+            track("reward_claimed", { code: code });
+          });
+      });
+    }
+    showClaimed();
+    showPending();
 
     var state = "idle"; // idle | play | over
     var ball = { x: 0, y: 0, vx: 0, vy: 0, r: 26, spin: 0 };
@@ -387,8 +456,7 @@
         ball.y = H * 0.42 + Math.sin(Date.now() / 600) * 6;
         text("Keep-ups", "Tap the ball to start");
       } else if (state === "over") {
-        var r = rewardFor(score);
-        text("Dropped at " + score + "!", (r ? "🎁 Earned " + r.code + " · " : "") + "Tap to try again");
+        text("Dropped at " + score + "!", (rewardFor(score) ? "🎁 Reward earned — claim below · " : "") + "Tap to try again");
       }
 
       drawParticles(dt);
