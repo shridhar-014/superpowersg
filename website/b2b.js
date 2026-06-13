@@ -335,30 +335,36 @@
   /* ================= MANUFACTURING FLOW ================= */
 
   function renderManufacturing(section) {
-    var S = { section: section, sport: null, product: null, route: null };
+    var isCorp = section === "corporate"; // corporate/uniform wear is not sport-specific
+    var S = { section: section, sport: null, product: null, route: null, n0: isCorp ? 4 : 5 };
     var label = section === "sportswear" ? "Sportswear" : "Corporate / Uniform wear";
     flowRoot.innerHTML =
-      '<h2 class="b2b-step-title"><span class="b2b-step-num">2</span> ' + label + " — select sport</h2>" +
-      '<div class="chips-row" id="mSport"></div>' +
-      '<div id="mProductStep" hidden><h2 class="b2b-step-title"><span class="b2b-step-num">3</span> What do you want?</h2><div class="chips-row" id="mProduct"></div></div>' +
-      '<div id="mRouteStep" hidden><h2 class="b2b-step-title"><span class="b2b-step-num">4</span> Choose how</h2>' +
+      (isCorp ? "" :
+        '<h2 class="b2b-step-title"><span class="b2b-step-num">2</span> ' + label + " — select sport</h2>" +
+        '<div class="chips-row" id="mSport"></div>') +
+      '<div id="mProductStep"' + (isCorp ? "" : " hidden") + '><h2 class="b2b-step-title"><span class="b2b-step-num">' + (isCorp ? 2 : 3) + "</span> " + (isCorp ? label + " — what do you want?" : "What do you want?") + '</h2><div class="chips-row" id="mProduct"></div></div>' +
+      '<div id="mRouteStep" hidden><h2 class="b2b-step-title"><span class="b2b-step-num">' + (isCorp ? 3 : 4) + "</span> Choose how</h2>" +
       '<div class="route-grid">' +
       '<button type="button" class="glass route-card" data-route="ready"><strong>Ready-made</strong><span>In-stock items, optional printing</span></button>' +
       '<button type="button" class="glass route-card" data-route="custom"><strong>Custom manufacturing</strong><span>Made to your spec (min ' + CUSTOM_MOQ + " pcs)</span></button>" +
       "</div></div>" +
       '<div id="mConfig"></div>';
 
-    var sportRow = $("#mSport");
-    SPORTS.forEach(function (s) {
-      var c = el('<button type="button" class="chip">' + s + "</button>");
-      c.addEventListener("click", function () {
-        S.sport = s;
-        $$(".chip", sportRow).forEach(function (x) { x.classList.remove("active"); });
-        c.classList.add("active");
-        drawProducts();
+    if (!isCorp) {
+      var sportRow = $("#mSport");
+      SPORTS.forEach(function (s) {
+        var c = el('<button type="button" class="chip">' + s + "</button>");
+        c.addEventListener("click", function () {
+          S.sport = s;
+          $$(".chip", sportRow).forEach(function (x) { x.classList.remove("active"); });
+          c.classList.add("active");
+          drawProducts();
+        });
+        sportRow.appendChild(c);
       });
-      sportRow.appendChild(c);
-    });
+    } else {
+      drawProducts();
+    }
     function drawProducts() {
       $("#mProductStep").hidden = false;
       var row = $("#mProduct");
