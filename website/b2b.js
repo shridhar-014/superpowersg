@@ -297,7 +297,7 @@
           '<p class="eq-price">' + money(eq.price) + ' <span>/pc</span></p>' +
           '<label class="cart-qty">Qty <input type="number" min="1" value="1" class="eq-qty"></label>' +
           '<p class="eq-tier"></p>' +
-          '<label class="eq-cust-toggle"><input type="checkbox" class="eq-cust"> Add name printing (+' + money(EQUIP_PRINT_FEE) + "/pc)</label>" +
+          '<button type="button" class="eq-print-toggle print-toggle" aria-expanded="false">+ Add name printing (+' + money(EQUIP_PRINT_FEE) + "/pc)</button>" +
           '<div class="eq-cust-box" hidden>' +
           '<label>Names to print (one per line)<textarea class="field eq-names" rows="3" placeholder="e.g. DAV PUBLIC SCHOOL&#10;or one player name per line"></textarea></label>' +
           '<label>Logo (optional)<input type="file" accept="image/*" class="field eq-logo"></label>' +
@@ -306,27 +306,34 @@
           '<button class="btn btn-primary eq-add" type="button">Add to cart · <span class="eq-total"></span></button>' +
           "</article>");
         var qtyI = $(".eq-qty", card), tierP = $(".eq-tier", card), totalS = $(".eq-total", card);
-        var custT = $(".eq-cust", card), custBox = $(".eq-cust-box", card);
+        var printToggle = $(".eq-print-toggle", card), custBox = $(".eq-cust-box", card);
+        var printing = false;
         function upd() {
           var q = Math.max(1, parseInt(qtyI.value, 10) || 1);
-          var unit = eq.price + (custT.checked ? EQUIP_PRINT_FEE : 0);
+          var unit = eq.price + (printing ? EQUIP_PRINT_FEE : 0);
           var t = tierFor(q);
           tierP.textContent = t.label + " → " + money(unit * t.mult) + "/pc";
           totalS.textContent = money(unit * t.mult * q);
         }
         qtyI.addEventListener("input", upd);
-        custT.addEventListener("change", function () { custBox.hidden = !custT.checked; upd(); });
+        printToggle.addEventListener("click", function () {
+          printing = !printing;
+          custBox.hidden = !printing;
+          printToggle.setAttribute("aria-expanded", printing ? "true" : "false");
+          printToggle.textContent = printing ? "− Remove name printing" : "+ Add name printing (+" + money(EQUIP_PRINT_FEE) + "/pc)";
+          upd();
+        });
         $(".eq-add", card).addEventListener("click", function () {
           var q = Math.max(1, parseInt(qtyI.value, 10) || 1);
           var names = $(".eq-names", card).value.trim();
           var hasLogo = $(".eq-logo", card).files.length > 0;
-          if (custT.checked && (names || hasLogo) && !$(".eq-rights", card).checked) {
+          if (printing && (names || hasLogo) && !$(".eq-rights", card).checked) {
             toast("Please confirm you hold rights to the names/logos."); return;
           }
           addToCart({
             title: eq.name,
-            detail: eq.sport + (custT.checked ? " · printed" + (names ? ": " + names.split("\n").length + " name(s)" : "") + (hasLogo ? " + logo (share file after order)" : "") : ""),
-            unit: eq.price + (custT.checked ? EQUIP_PRINT_FEE : 0),
+            detail: eq.sport + (printing ? " · printed" + (names ? ": " + names.split("\n").length + " name(s)" : "") + (hasLogo ? " + logo (share file after order)" : "") : ""),
+            unit: eq.price + (printing ? EQUIP_PRINT_FEE : 0),
             qty: q
           });
         });
