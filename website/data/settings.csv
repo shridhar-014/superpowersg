@@ -1,0 +1,11 @@
+Setting,Value
+equipment_print_fee,30
+print_position_fee,40
+name_and_number_fee,70
+custom_min_order_qty,10
+sublimation_panel_fee_front,40
+sublimation_panel_fee_back,40
+sublimation_panel_fee_sleeves,30
+sublimation_panel_fee_full,90
+quantity_discount_tiers,10:5|50:10|100:15
+sleeve_length_options,Half|Quarter|Full|Custom

@@ -1,0 +1,10 @@
+View,Code,Area Name,Recommended Width (cm),Recommended Height (cm)
+Front,F1,Left chest,9,9
+Front,F2,Right chest,9,9
+Front,F3,Centre chest,25,30
+Front,F4,Front bottom,12,8
+Back,B1,Upper back (name),25,8
+Back,B2,Centre back,28,35
+Back,B3,Lower back,12,8
+Sleeves,S1,Left sleeve,7,7
+Sleeves,S2,Right sleeve,7,7

@@ -222,3 +222,5 @@
 .review-table th { text-align: left; color: var(--muted); font-weight: 600; padding: 8px 12px 8px 0; vertical-align: top; white-space: nowrap; }
 .review-table td { padding: 8px 0; border-bottom: 1px solid var(--line); }
 .review-table tr:last-child td { border-bottom: none; font-weight: 700; }
+
+.b2b-data-status { margin-top: 10px; font-size: 0.74rem; color: var(--muted); }

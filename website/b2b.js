@@ -52,6 +52,10 @@
                        { id: "ru2", name: "School Uniform Set",          price: 550, img: null }]
   };
 
+  var SIZES = {}; // populated from products.csv (sizesFor falls back to defaults)
+  // mockup placement of each print code (engineering geometry — not edited via data)
+  var BOX_COORDS = { F1: [76, 78], F2: [124, 78], F3: [100, 115], F4: [100, 175], B1: [100, 70], B2: [100, 125], B3: [100, 180], S1: [44, 70], S2: [156, 70] };
+
   var POSITIONS = {
     front: [
       { id: "F1", name: "Left chest",   rec: [9, 9],   box: [76, 78]  },
@@ -74,6 +78,7 @@
 
   // sizes per product; quantities are entered per size
   function sizesFor(product) {
+    if (SIZES[product] && SIZES[product].length) return SIZES[product];
     if (product === "Cap") return ["Free Size"];
     return ["S", "M", "L", "XL", "XXL"];
   }
@@ -786,8 +791,144 @@
       });
   });
 
+  /* ================= DATA LOADER (reads website/data/*.csv) =================
+     The catalogue above is the built-in fallback. On load we fetch the CSV
+     files and override it, so editing the CSVs changes the live portal.       */
+
+  function parseCSV(text) {
+    var rows = [], row = [], field = "", inQ = false;
+    for (var i = 0; i < text.length; i++) {
+      var c = text[i];
+      if (inQ) {
+        if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else inQ = false; }
+        else field += c;
+      } else if (c === '"') { inQ = true; }
+      else if (c === ",") { row.push(field); field = ""; }
+      else if (c === "\n" || c === "\r") {
+        if (c === "\r" && text[i + 1] === "\n") i++;
+        row.push(field); field = "";
+        if (row.length > 1 || row[0] !== "") rows.push(row);
+        row = [];
+      } else field += c;
+    }
+    if (field !== "" || row.length) { row.push(field); rows.push(row); }
+    return rows;
+  }
+  function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, ""); }
+  function toObjects(rows) {
+    if (!rows.length) return [];
+    var h = rows[0].map(function (s) { return slug(s); });
+    return rows.slice(1)
+      .filter(function (r) { return r.some(function (c) { return String(c).trim() !== ""; }); })
+      .map(function (r) { var o = {}; h.forEach(function (k, i) { o[k] = (r[i] || "").trim(); }); return o; });
+  }
+  function pipeList(s) { return String(s || "").split("|").map(function (x) { return x.trim(); }).filter(Boolean); }
+  function num(s) { var n = parseFloat(String(s).replace(/[^0-9.\-]/g, "")); return isNaN(n) ? 0 : n; }
+
+  function fetchCSV(name) {
+    return fetch("data/" + name + ".csv?t=" + Date.now(), { cache: "no-cache" })
+      .then(function (r) { if (!r.ok) throw new Error(name); return r.text(); })
+      .then(function (t) { return toObjects(parseCSV(t)); });
+  }
+
+  var APPLY = {
+    sports: function (o) { var v = o.map(function (r) { return r.sport; }).filter(Boolean); if (v.length) SPORTS = v; },
+    products: function (o) {
+      if (!o.length) return;
+      var pt = { sportswear: [], corporate: [] }, sizes = {}, styles = {}, base = {}, sleeves = [];
+      o.forEach(function (r) {
+        var type = r.product_type; if (!type) return;
+        var sec = (r.section || "Both").toLowerCase();
+        if (sec === "sportswear" || sec === "both") pt.sportswear.push(type);
+        if (sec === "corporate" || sec === "both") pt.corporate.push(type);
+        sizes[type] = pipeList(r.sizes);
+        styles[type] = { label: r.style_label || "Style", options: pipeList(r.style_options) };
+        base[type] = num(r.custom_base_price_inr);
+        if (/^y/i.test(r.has_sleeves || "")) sleeves.push(type);
+      });
+      if (pt.sportswear.length || pt.corporate.length) PRODUCT_TYPES = pt;
+      SIZES = sizes; STYLE_OPTIONS = styles; CUSTOM_BASE = base; SLEEVE_PRODUCTS = sleeves;
+    },
+    equipment: function (o) {
+      var v = o.map(function (r, i) { return { id: "eq" + i, sport: r.sport, name: r.item_name, price: num(r.price_inr), detail: r.description, img: r.image_file || null }; })
+        .filter(function (r) { return r.name; });
+      if (v.length) EQUIPMENT = v;
+    },
+    readymade: function (o) {
+      if (!o.length) return;
+      var ready = {};
+      o.forEach(function (r, i) {
+        if (!r.product_type || !r.item_name) return;
+        (ready[r.product_type] = ready[r.product_type] || []).push({ id: "r" + i, name: r.item_name, price: num(r.price_inr), img: r.image_file || null });
+      });
+      if (Object.keys(ready).length) READY = ready;
+    },
+    fabrics: function (o) {
+      var plain = [], sub = [];
+      o.forEach(function (r) {
+        if (!r.fabric_name) return;
+        var rec = { id: slug(r.fabric_name), name: r.fabric_name, gsm: num(r.gsm), add: num(r.price_change_inr) };
+        if (/sub/i.test(r.type)) sub.push(rec);
+        else { rec.colors = pipeList(r.colors_available); plain.push(rec); }
+      });
+      if (plain.length) PLAIN_FABRICS = plain;
+      if (sub.length) SUB_FABRICS = sub;
+    },
+    colors: function (o) { var m = {}; o.forEach(function (r) { if (r.color_name) m[r.color_name] = r.hex_code; }); if (Object.keys(m).length) COLOR_HEX = m; },
+    designs: function (o) { var v = o.map(function (r) { return r.design_name; }).filter(Boolean); if (v.length) DESIGNS = v; },
+    print_areas: function (o) {
+      if (!o.length) return;
+      var pos = { front: [], back: [], sleeve: [] };
+      var map = { front: "front", back: "back", sleeve: "sleeve", sleeves: "sleeve" };
+      o.forEach(function (r) {
+        var key = map[(r.view || "").toLowerCase()]; if (!key) return;
+        pos[key].push({ id: r.code, name: r.area_name, rec: [num(r.recommended_width_cm), num(r.recommended_height_cm)], box: BOX_COORDS[r.code] || [100, 110] });
+      });
+      if (pos.front.length || pos.back.length || pos.sleeve.length) POSITIONS = pos;
+    },
+    settings: function (o) {
+      var s = {}; o.forEach(function (r) { if (r.setting) s[slug(r.setting)] = r.value; });
+      if (s.equipment_print_fee) EQUIP_PRINT_FEE = num(s.equipment_print_fee);
+      if (s.print_position_fee) PRINT_POS_FEE = num(s.print_position_fee);
+      if (s.name_and_number_fee) NAME_NUM_FEE = num(s.name_and_number_fee);
+      if (s.custom_min_order_qty) CUSTOM_MOQ = num(s.custom_min_order_qty);
+      PANEL_FEES = {
+        "Front": num(s.sublimation_panel_fee_front) || PANEL_FEES.Front,
+        "Back": num(s.sublimation_panel_fee_back) || PANEL_FEES.Back,
+        "Sleeves": num(s.sublimation_panel_fee_sleeves) || PANEL_FEES.Sleeves,
+        "Full sublimation": num(s.sublimation_panel_fee_full) || PANEL_FEES["Full sublimation"]
+      };
+      if (s.sleeve_length_options) { var sl = pipeList(s.sleeve_length_options); if (sl.length) SLEEVES = sl; }
+      if (s.quantity_discount_tiers) {
+        var tiers = pipeList(s.quantity_discount_tiers).map(function (t) {
+          var p = t.split(":"); return { min: num(p[0]), disc: num(p[1]) };
+        }).filter(function (t) { return t.min > 0; }).sort(function (a, b) { return b.min - a.min; });
+        if (tiers.length) {
+          TIERS = tiers.map(function (t) { return { min: t.min, mult: 1 - t.disc / 100, label: t.min + "+ pcs · " + t.disc + "% off" }; });
+          TIERS.push({ min: 1, mult: 1, label: "base price" });
+        }
+      }
+    }
+  };
+
+  function loadData() {
+    var files = Object.keys(APPLY);
+    var status = $("#dataStatus");
+    return Promise.all(files.map(function (name) {
+      return fetchCSV(name).then(function (objs) { APPLY[name](objs); return true; })
+        .catch(function () { return false; });
+    })).then(function (results) {
+      var ok = results.filter(Boolean).length;
+      if (status) {
+        status.hidden = false;
+        status.textContent = ok ? "Catalogue loaded from your data files ✓" : "Showing built-in sample catalogue.";
+      }
+    });
+  }
+
   /* ================= INIT ================= */
   $("#year") && ($("#year").textContent = new Date().getFullYear());
   saveCart();
   if (cart.length) { $("#cartSection").hidden = false; renderCart(); }
+  loadData();
 })();

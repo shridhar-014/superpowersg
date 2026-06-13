@@ -1,0 +1,8 @@
+Product Type,Section,Custom Base Price (INR),Sizes,Style Label,Style Options,Has Sleeves
+Jersey,Sportswear,380,S|M|L|XL|XXL,Neck type,Round neck|V-neck|Polo collar|Mandarin collar,Yes
+T-shirt,Both,260,S|M|L|XL|XXL,Neck type,Round neck|V-neck|Polo collar|Henley,Yes
+Lowers,Sportswear,320,S|M|L|XL|XXL,Waistband,Elastic|Elastic + drawstring,No
+Shorts,Sportswear,240,S|M|L|XL|XXL,Waistband,Elastic|Elastic + drawstring,No
+Tracksuit,Both,950,S|M|L|XL|XXL,Collar type,High-zip collar|Hooded,Yes
+Cap,Both,180,Free Size,Cap style,Baseball|Snapback|Flexfit,No
+School Uniform,Corporate,600,S|M|L|XL|XXL,Collar type,Shirt collar|Round neck (house tee),Yes
