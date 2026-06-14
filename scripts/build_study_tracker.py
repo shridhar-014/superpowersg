@@ -95,14 +95,8 @@ for c, h in enumerate(HEADERS, start=1):
     cell.border = BORDER
 ws.row_dimensions[3].height = 28
 
-# Sample rows so the template is immediately usable
-samples = [
-    ["Mathematics", "Algebra - Quadratic Equations", "High", "Completed", "2026-06-01", "2026-06-10", 6, 6, None, "4 - Good", "Felt solid on practice set."],
-    ["Mathematics", "Calculus - Integration", "High", "In Progress", "2026-06-08", "2026-06-20", 8, 3, None, "3 - OK", "Revisit by-parts."],
-    ["Physics", "Thermodynamics", "Medium", "Not Started", "2026-06-15", "2026-06-25", 5, 0, None, "1 - Shaky", ""],
-    ["Chemistry", "Organic - Reaction Mechanisms", "High", "Revising", "2026-06-05", "2026-06-18", 7, 5, None, "3 - OK", "Make flashcards."],
-    ["Biology", "Genetics", "Low", "On Hold", "2026-06-20", "2026-07-01", 4, 1, None, "2 - Weak", "After exams week."],
-]
+# No pre-filled subjects — the table is left blank for the user to enter their own.
+samples = []
 
 # Progress formula: auto from Status unless user types a number.
 def progress_formula(r):
@@ -277,8 +271,8 @@ for ref in ("B12", "C12", "D12", "E12"):
     cc.border = BORDER
 dash["F12"].border = BORDER
 
-# Pull subject names; sample subjects pre-listed, rest blank for the user.
-subject_seed = ["Mathematics", "Physics", "Chemistry", "Biology", "", "", "", ""]
+# Subject rows left blank for the user to fill in.
+subject_seed = ["", "", "", "", "", "", "", ""]
 start = 13
 for i, subj in enumerate(subject_seed):
     r = start + i
