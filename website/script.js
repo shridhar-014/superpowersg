@@ -31,8 +31,10 @@
   var reveals = $$(".reveal");
   if ("IntersectionObserver" in window) {
     var io = new IntersectionObserver(function (entries) {
+      var i = 0;
       entries.forEach(function (e) {
         if (e.isIntersecting) {
+          e.target.style.transitionDelay = (Math.min(i++, 6) * 60) + "ms";
           e.target.classList.add("in");
           io.unobserve(e.target);
         }
