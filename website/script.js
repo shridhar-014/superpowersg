@@ -487,13 +487,13 @@
 })();
 
 /* ============================================================
-   Live kinetic-energy motion background — a flow field of light
-   particles leaving faint trails. Sporty "speed/energy" feel,
-   whisper-subtle, and built to stay light on phones:
-   capped resolution, lower FPS + fewer particles on mobile,
-   pauses when the tab is hidden, static under reduced-motion.
+   Dynamic sports motion background — spinning sport balls with
+   motion speed-lines plus drifting athlete silhouettes.
+   Recognizable sports graphics, animated, tuned to stay light
+   on phones (capped DPR, fewer/lower-FPS on mobile, pauses when
+   hidden, single static frame under reduced-motion).
    ============================================================ */
-(function motionBackground() {
+(function sportsBackground() {
   "use strict";
   var canvas = document.getElementById("motionBg");
   if (!canvas || !canvas.getContext) return;
@@ -502,96 +502,147 @@
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   var DPR = Math.min(window.devicePixelRatio || 1, 1.5);
-  var W = 0, H = 0, mobile = false, FPS_INTERVAL = 1000 / 50;
-  var particles = [], t = 0;
-  var running = true, rafId = null, lastFrame = 0;
+  var W = 0, H = 0, mobile = false, FPS = 1000 / 50;
+  var balls = [], figs = [], running = true, rafId = null, last = 0;
 
-  var INK = "12,12,20";
-  var ACCENTS = ["124,58,237", "6,182,212"]; // faint violet / cyan, used sparingly
+  var KINDS = ["football", "basket", "volley", "cricket", "tennis"];
+  var runnerPath = (typeof Path2D !== "undefined")
+    ? new Path2D("M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.6 13.9 1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1l-5.2 2.2v4.7h2v-3.4l1.8-.7-1.6 8.1-4.9-1-.4 2 7 1.4z")
+    : null;
 
   function rnd(a, b) { return a + Math.random() * (b - a); }
+  function circle(r) { ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); }
 
-  function seed(n) {
-    particles = [];
+  function paintBall(kind, r) {
+    ctx.save();
+    if (kind === "football") {
+      circle(r); ctx.fillStyle = "#f3f3f5"; ctx.fill();
+      ctx.save(); circle(r); ctx.clip();
+      ctx.fillStyle = "#15151c";
+      ctx.beginPath();
+      for (var i = 0; i < 5; i++) { var a = -Math.PI / 2 + i * 2 * Math.PI / 5; var x = Math.cos(a) * r * 0.4, y = Math.sin(a) * r * 0.4; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = "rgba(21,21,28,0.85)"; ctx.lineWidth = r * 0.05;
+      for (var s = 0; s < 5; s++) { var b = -Math.PI / 2 + s * 2 * Math.PI / 5; ctx.beginPath(); ctx.moveTo(Math.cos(b) * r * 0.4, Math.sin(b) * r * 0.4); ctx.lineTo(Math.cos(b) * r, Math.sin(b) * r); ctx.stroke(); }
+      ctx.restore();
+    } else if (kind === "basket") {
+      circle(r); ctx.fillStyle = "#e8651a"; ctx.fill();
+      ctx.save(); circle(r); ctx.clip();
+      ctx.strokeStyle = "rgba(28,16,8,0.8)"; ctx.lineWidth = r * 0.05;
+      ctx.beginPath(); ctx.moveTo(0, -r); ctx.lineTo(0, r); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-r, 0); ctx.lineTo(r, 0); ctx.stroke();
+      ctx.beginPath(); ctx.arc(-r * 1.15, 0, r * 1.3, -0.65, 0.65); ctx.stroke();
+      ctx.beginPath(); ctx.arc(r * 1.15, 0, r * 1.3, Math.PI - 0.65, Math.PI + 0.65); ctx.stroke();
+      ctx.restore();
+    } else if (kind === "volley") {
+      circle(r); ctx.fillStyle = "#f6f8ff"; ctx.fill();
+      ctx.save(); circle(r); ctx.clip();
+      ctx.strokeStyle = "rgba(36,71,199,0.75)"; ctx.lineWidth = r * 0.05;
+      ctx.beginPath(); ctx.arc(-r * 0.6, -r * 0.3, r * 1.15, -0.4, 1.1); ctx.stroke();
+      ctx.beginPath(); ctx.arc(r * 0.4, r * 0.7, r * 1.15, -2.3, -0.9); ctx.stroke();
+      ctx.beginPath(); ctx.arc(r * 0.7, -r * 0.7, r * 1.15, 1.7, 3.1); ctx.stroke();
+      ctx.restore();
+    } else if (kind === "cricket") {
+      circle(r); ctx.fillStyle = "#b21228"; ctx.fill();
+      ctx.save(); circle(r); ctx.clip();
+      ctx.strokeStyle = "rgba(255,255,255,0.8)"; ctx.lineWidth = r * 0.05; ctx.setLineDash([r * 0.13, r * 0.1]);
+      ctx.beginPath(); ctx.moveTo(0, -r); ctx.lineTo(0, r); ctx.stroke(); ctx.setLineDash([]);
+      ctx.restore();
+    } else {
+      circle(r); ctx.fillStyle = "#c7d92b"; ctx.fill();
+      ctx.save(); circle(r); ctx.clip();
+      ctx.strokeStyle = "rgba(255,255,255,0.85)"; ctx.lineWidth = r * 0.05;
+      ctx.beginPath(); ctx.arc(-r * 1.05, 0, r * 1.3, -0.6, 0.6); ctx.stroke();
+      ctx.beginPath(); ctx.arc(r * 1.05, 0, r * 1.3, Math.PI - 0.6, Math.PI + 0.6); ctx.stroke();
+      ctx.restore();
+    }
+    circle(r); ctx.strokeStyle = "rgba(12,12,20,0.16)"; ctx.lineWidth = 1; ctx.stroke();
+    ctx.restore();
+  }
+
+  function makeBalls(n) {
+    balls = [];
     for (var i = 0; i < n; i++) {
-      var accent = Math.random() < 0.08;
-      particles.push({
-        x: Math.random() * W, y: Math.random() * H,
-        speed: rnd(0.5, 1.6), life: rnd(0, 1), decay: rnd(0.0015, 0.004),
-        col: accent ? ACCENTS[(Math.random() * ACCENTS.length) | 0] : INK,
-        baseAlpha: accent ? rnd(0.05, 0.10) : rnd(0.05, 0.13),
-        w: accent ? rnd(0.6, 1.1) : rnd(0.5, 0.9)
+      var ang = rnd(0, Math.PI * 2), spd = rnd(mobile ? 0.3 : 0.4, mobile ? 0.7 : 1.0);
+      balls.push({
+        kind: KINDS[(Math.random() * KINDS.length) | 0],
+        x: Math.random() * W, y: Math.random() * H, r: rnd(mobile ? 20 : 26, mobile ? 42 : 72),
+        vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd,
+        rot: Math.random() * Math.PI * 2, vr: rnd(-0.012, 0.012)
       });
     }
+  }
+  function makeFigs(n) {
+    figs = [];
+    for (var i = 0; i < n; i++) figs.push({ x: Math.random() * W, y: rnd(H * 0.2, H * 0.85), s: rnd(9, 16), vx: rnd(0.12, 0.4), ph: Math.random() * 6 });
   }
 
   function size() {
     var rect = canvas.getBoundingClientRect();
-    W = rect.width; H = rect.height;
-    if (!W || !H) return;
+    W = rect.width; H = rect.height; if (!W || !H) return;
     mobile = W < 760;
-    canvas.width = Math.round(W * DPR);
-    canvas.height = Math.round(H * DPR);
+    canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    FPS_INTERVAL = mobile ? 1000 / 30 : 1000 / 50;
-    seed(Math.round(Math.min((W * H) / (mobile ? 14000 : 9000), mobile ? 40 : 130)));
-    ctx.fillStyle = "#fafafa";
-    ctx.fillRect(0, 0, W, H);
+    FPS = mobile ? 1000 / 30 : 1000 / 50;
+    makeBalls(mobile ? 3 : 6);
+    makeFigs(mobile ? 1 : 3);
   }
 
-  // slowly evolving pseudo-noise current (no library)
-  function field(x, y) {
-    var s = 0.0016;
-    return (Math.sin(x * s + t) + Math.cos(y * s - t * 0.8) + Math.sin((x + y) * s * 0.6 + t * 0.5)) * 1.1;
+  function drawFigs(move) {
+    if (!runnerPath) return;
+    ctx.globalAlpha = 0.05; ctx.fillStyle = "#12121c";
+    for (var i = 0; i < figs.length; i++) {
+      var f = figs[i];
+      ctx.save();
+      ctx.translate(f.x, f.y + Math.sin(f.ph) * 4);
+      ctx.scale(f.s, f.s); ctx.translate(-12, -12);
+      ctx.fill(runnerPath);
+      ctx.restore();
+      if (move) { f.x += f.vx; f.ph += 0.012; if (f.x > W + f.s * 14) { f.x = -f.s * 14; f.y = rnd(H * 0.2, H * 0.85); } }
+    }
+    ctx.globalAlpha = 1;
   }
 
-  function step() {
-    ctx.fillStyle = "rgba(250,250,250,0.085)"; // fade old trails toward the page bg
-    ctx.fillRect(0, 0, W, H);
-    for (var i = 0; i < particles.length; i++) {
-      var p = particles[i];
-      var a = field(p.x, p.y);
-      var nx = p.x + Math.cos(a) * p.speed, ny = p.y + Math.sin(a) * p.speed;
-      var alpha = p.baseAlpha * Math.sin(Math.PI * p.life);
-      ctx.strokeStyle = "rgba(" + p.col + "," + alpha.toFixed(3) + ")";
-      ctx.lineWidth = p.w;
-      ctx.beginPath();
-      ctx.moveTo(p.x, p.y);
-      ctx.lineTo(nx, ny);
-      ctx.stroke();
-      p.x = nx; p.y = ny; p.life -= p.decay;
-      if (p.life <= 0 || nx < -10 || nx > W + 10 || ny < -10 || ny > H + 10) {
-        p.x = Math.random() * W; p.y = Math.random() * H; p.life = 1;
+  function drawBalls(move) {
+    for (var i = 0; i < balls.length; i++) {
+      var b = balls[i];
+      var sp = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
+      if (sp > 0.05) {
+        var ux = -b.vx / sp, uy = -b.vy / sp;
+        ctx.globalAlpha = 0.10; ctx.strokeStyle = "#12121c"; ctx.lineWidth = 1.3;
+        for (var k = -1; k <= 1; k++) {
+          var ox = -uy * b.r * 0.5 * k, oy = ux * b.r * 0.5 * k;
+          ctx.beginPath();
+          ctx.moveTo(b.x + ox + ux * b.r * 1.1, b.y + oy + uy * b.r * 1.1);
+          ctx.lineTo(b.x + ox + ux * (b.r * 1.1 + b.r * 1.4 + sp * 18), b.y + oy + uy * (b.r * 1.1 + b.r * 1.4 + sp * 18));
+          ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+      }
+      ctx.globalAlpha = 0.45;
+      ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.rot); paintBall(b.kind, b.r); ctx.restore();
+      ctx.globalAlpha = 1;
+      if (move) {
+        b.x += b.vx; b.y += b.vy; b.rot += b.vr;
+        var m = b.r + 14;
+        if (b.x < -m) b.x = W + m; if (b.x > W + m) b.x = -m;
+        if (b.y < -m) b.y = H + m; if (b.y > H + m) b.y = -m;
       }
     }
-    t += 0.0016;
   }
+
+  function frame(move) { ctx.clearRect(0, 0, W, H); drawFigs(move); drawBalls(move); }
 
   function loop(now) {
-    rafId = null;
-    if (!running) return;
-    if (!lastFrame || now - lastFrame >= FPS_INTERVAL) { lastFrame = now; step(); }
+    rafId = null; if (!running) return;
+    if (!last || now - last >= FPS) { last = now; frame(true); }
     rafId = requestAnimationFrame(loop);
   }
-  function setRunning(on) {
-    running = on;
-    if (on && rafId === null) { lastFrame = 0; rafId = requestAnimationFrame(loop); }
-  }
+  function setRunning(on) { running = on; if (on && rafId === null) { last = 0; rafId = requestAnimationFrame(loop); } }
 
-  size();
-  if (!W || !H) return;
-
-  if (reduce) {
-    for (var i = 0; i < particles.length; i++) {
-      var p = particles[i];
-      ctx.fillStyle = "rgba(" + p.col + "," + (p.baseAlpha * 0.8).toFixed(3) + ")";
-      ctx.fillRect(p.x, p.y, p.w + 0.6, p.w + 0.6);
-    }
-    return;
-  }
-
+  size(); if (!W || !H) return;
+  if (reduce) { frame(false); return; }
   document.addEventListener("visibilitychange", function () { setRunning(!document.hidden); });
-  var rT;
-  window.addEventListener("resize", function () { clearTimeout(rT); rT = setTimeout(size, 200); });
+  var rT; window.addEventListener("resize", function () { clearTimeout(rT); rT = setTimeout(size, 200); });
   rafId = requestAnimationFrame(loop);
 })();
