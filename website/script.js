@@ -485,3 +485,113 @@
     rafId = requestAnimationFrame(loop);
   })();
 })();
+
+/* ============================================================
+   Live kinetic-energy motion background — a flow field of light
+   particles leaving faint trails. Sporty "speed/energy" feel,
+   whisper-subtle, and built to stay light on phones:
+   capped resolution, lower FPS + fewer particles on mobile,
+   pauses when the tab is hidden, static under reduced-motion.
+   ============================================================ */
+(function motionBackground() {
+  "use strict";
+  var canvas = document.getElementById("motionBg");
+  if (!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+  var W = 0, H = 0, mobile = false, FPS_INTERVAL = 1000 / 50;
+  var particles = [], t = 0;
+  var running = true, rafId = null, lastFrame = 0;
+
+  var INK = "12,12,20";
+  var ACCENTS = ["124,58,237", "6,182,212"]; // faint violet / cyan, used sparingly
+
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+
+  function seed(n) {
+    particles = [];
+    for (var i = 0; i < n; i++) {
+      var accent = Math.random() < 0.08;
+      particles.push({
+        x: Math.random() * W, y: Math.random() * H,
+        speed: rnd(0.5, 1.6), life: rnd(0, 1), decay: rnd(0.0015, 0.004),
+        col: accent ? ACCENTS[(Math.random() * ACCENTS.length) | 0] : INK,
+        baseAlpha: accent ? rnd(0.05, 0.10) : rnd(0.05, 0.13),
+        w: accent ? rnd(0.6, 1.1) : rnd(0.5, 0.9)
+      });
+    }
+  }
+
+  function size() {
+    var rect = canvas.getBoundingClientRect();
+    W = rect.width; H = rect.height;
+    if (!W || !H) return;
+    mobile = W < 760;
+    canvas.width = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    FPS_INTERVAL = mobile ? 1000 / 30 : 1000 / 50;
+    seed(Math.round(Math.min((W * H) / (mobile ? 14000 : 9000), mobile ? 40 : 130)));
+    ctx.fillStyle = "#fafafa";
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  // slowly evolving pseudo-noise current (no library)
+  function field(x, y) {
+    var s = 0.0016;
+    return (Math.sin(x * s + t) + Math.cos(y * s - t * 0.8) + Math.sin((x + y) * s * 0.6 + t * 0.5)) * 1.1;
+  }
+
+  function step() {
+    ctx.fillStyle = "rgba(250,250,250,0.085)"; // fade old trails toward the page bg
+    ctx.fillRect(0, 0, W, H);
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      var a = field(p.x, p.y);
+      var nx = p.x + Math.cos(a) * p.speed, ny = p.y + Math.sin(a) * p.speed;
+      var alpha = p.baseAlpha * Math.sin(Math.PI * p.life);
+      ctx.strokeStyle = "rgba(" + p.col + "," + alpha.toFixed(3) + ")";
+      ctx.lineWidth = p.w;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(nx, ny);
+      ctx.stroke();
+      p.x = nx; p.y = ny; p.life -= p.decay;
+      if (p.life <= 0 || nx < -10 || nx > W + 10 || ny < -10 || ny > H + 10) {
+        p.x = Math.random() * W; p.y = Math.random() * H; p.life = 1;
+      }
+    }
+    t += 0.0016;
+  }
+
+  function loop(now) {
+    rafId = null;
+    if (!running) return;
+    if (!lastFrame || now - lastFrame >= FPS_INTERVAL) { lastFrame = now; step(); }
+    rafId = requestAnimationFrame(loop);
+  }
+  function setRunning(on) {
+    running = on;
+    if (on && rafId === null) { lastFrame = 0; rafId = requestAnimationFrame(loop); }
+  }
+
+  size();
+  if (!W || !H) return;
+
+  if (reduce) {
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      ctx.fillStyle = "rgba(" + p.col + "," + (p.baseAlpha * 0.8).toFixed(3) + ")";
+      ctx.fillRect(p.x, p.y, p.w + 0.6, p.w + 0.6);
+    }
+    return;
+  }
+
+  document.addEventListener("visibilitychange", function () { setRunning(!document.hidden); });
+  var rT;
+  window.addEventListener("resize", function () { clearTimeout(rT); rT = setTimeout(size, 200); });
+  rafId = requestAnimationFrame(loop);
+})();
