@@ -1,0 +1,3 @@
+# Ignore generated media, keep the folder tracked
+*
+!.gitignore
