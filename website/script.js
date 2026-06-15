@@ -565,10 +565,10 @@
   function makeBalls(n) {
     balls = [];
     for (var i = 0; i < n; i++) {
-      var ang = rnd(0, Math.PI * 2), spd = rnd(mobile ? 0.3 : 0.4, mobile ? 0.7 : 1.0);
+      var ang = rnd(0, Math.PI * 2), spd = rnd(mobile ? 0.2 : 0.25, mobile ? 0.5 : 0.7);
       balls.push({
         kind: KINDS[(Math.random() * KINDS.length) | 0],
-        x: Math.random() * W, y: Math.random() * H, r: rnd(mobile ? 20 : 26, mobile ? 42 : 72),
+        x: Math.random() * W, y: Math.random() * H, r: rnd(mobile ? 24 : 34, mobile ? 48 : 88),
         vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd,
         rot: Math.random() * Math.PI * 2, vr: rnd(-0.012, 0.012)
       });
@@ -586,7 +586,7 @@
     canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     FPS = mobile ? 1000 / 30 : 1000 / 50;
-    makeBalls(mobile ? 3 : 6);
+    makeBalls(mobile ? 2 : 5);
     makeFigs(mobile ? 1 : 3);
   }
 
@@ -611,7 +611,7 @@
       var sp = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
       if (sp > 0.05) {
         var ux = -b.vx / sp, uy = -b.vy / sp;
-        ctx.globalAlpha = 0.10; ctx.strokeStyle = "#12121c"; ctx.lineWidth = 1.3;
+        ctx.globalAlpha = 0.14; ctx.strokeStyle = "#ff3b1f"; ctx.lineWidth = 1.4;
         for (var k = -1; k <= 1; k++) {
           var ox = -uy * b.r * 0.5 * k, oy = ux * b.r * 0.5 * k;
           ctx.beginPath();
@@ -621,7 +621,7 @@
         }
         ctx.globalAlpha = 1;
       }
-      ctx.globalAlpha = 0.45;
+      ctx.globalAlpha = 0.4;
       ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.rot); paintBall(b.kind, b.r); ctx.restore();
       ctx.globalAlpha = 1;
       if (move) {
