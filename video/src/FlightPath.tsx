@@ -7,27 +7,34 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import { countryPaths, graticulePath, project } from "./map";
 
 // ----- Route data -------------------------------------------------------
 // Delhi (DEL) -> Hong Kong (HKG). Great-circle distance ~3,760 km, ~5h30m.
+// City screen positions come from the SAME projection as the map, so the
+// pins and arc sit exactly on real geography.
+const DEL = project(77.1, 28.56);
+const HKG = project(113.91, 22.31);
 const ORIGIN = {
   code: "DEL",
   city: "New Delhi",
-  airport: "Indira Gandhi Intl",
   coord: "28.6°N 77.1°E",
-  x: 470,
-  y: 610,
+  x: DEL.x,
+  y: DEL.y,
 };
 const DEST = {
   code: "HKG",
   city: "Hong Kong",
-  airport: "Hong Kong Intl",
   coord: "22.3°N 113.9°E",
-  x: 1480,
-  y: 500,
+  x: HKG.x,
+  y: HKG.y,
 };
-// Control point lifted upward -> the arc bows north, like a real great circle.
-const CONTROL = { x: 975, y: 270 };
+// Control point lifted above the cities -> the arc bows north like a real
+// great-circle route.
+const CONTROL = {
+  x: (DEL.x + HKG.x) / 2,
+  y: Math.min(DEL.y, HKG.y) - 150,
+};
 const TOTAL_KM = 3760;
 
 // ----- Quadratic bezier helpers -----------------------------------------
@@ -135,25 +142,36 @@ export const FlightPath: React.FC = () => {
       }}
     >
       <svg width={1920} height={1080} viewBox="0 0 1920 1080">
-        {/* faint lat/long grid */}
-        <g stroke="rgba(255,255,255,0.05)" strokeWidth={1}>
-          {new Array(12).fill(0).map((_, i) => (
-            <line key={`v${i}`} x1={i * 160} y1={0} x2={i * 160} y2={1080} />
-          ))}
-          {new Array(7).fill(0).map((_, i) => (
-            <line key={`h${i}`} x1={0} y1={i * 160} x2={1920} y2={i * 160} />
+        {/* faint geographic graticule (real lon/lat lines) */}
+        <path
+          d={graticulePath}
+          fill="none"
+          stroke="rgba(255,255,255,0.06)"
+          strokeWidth={1}
+        />
+
+        {/* real country boundaries */}
+        <g>
+          {countryPaths.map((d, i) => (
+            <path
+              key={i}
+              d={d}
+              fill="rgba(58,110,165,0.28)"
+              stroke="rgba(255,255,255,0.22)"
+              strokeWidth={1}
+            />
           ))}
         </g>
 
-        {/* stars */}
+        {/* a few stars over the ocean/sky */}
         {STARS.map((s, i) => (
           <circle
             key={i}
             cx={s.x}
             cy={s.y}
-            r={s.r}
+            r={s.r * 0.8}
             fill="white"
-            opacity={0.3 + 0.4 * Math.abs(Math.sin((frame + s.tw) / 18))}
+            opacity={0.15 + 0.25 * Math.abs(Math.sin((frame + s.tw) / 18))}
           />
         ))}
 
