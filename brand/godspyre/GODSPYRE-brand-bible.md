@@ -114,11 +114,12 @@ on reveals, ash particles as connective tissue, hard cuts on impacts.
 ---
 
 ## Generating the assets
-Auth + tooling are wired. With credits on the Higgsfield account, run:
+Render targets, ready for whichever image/video tool we choose:
 
-```bash
-./brand/godspyre/generate.sh          # seal, hero, mockup, storyboard + motion film
-./brand/godspyre/generate.sh --stills # stills only (skip the video)
-```
+1. **War-god seal** (logomark) — square, 4K, transparent or charcoal ground.
+2. **Hero campaign image** — 3:4, cinematic battlefield editorial.
+3. **Product mockup** — 4:5, premium tee with chest seal print.
+4. **Storyboard sheet** — 16:9, the 6 beats below as a contact sheet.
+5. **Motion film** — 15–20s, image-to-video seeded from the hero still.
 
-Outputs land in `brand/godspyre/assets/`.
+Each prompt is captured in section 13 and the personality/color/motif specs above.
