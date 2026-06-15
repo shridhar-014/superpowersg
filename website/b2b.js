@@ -166,7 +166,7 @@
   function garmentSVG(product, view, colorHex, panelsLit) {
     var fill = colorHex || "#e9e9ee";
     function lit(p) { return panelsLit && (panelsLit.indexOf(p) >= 0 || panelsLit.indexOf("Full sublimation") >= 0); }
-    var subPat = '<defs><pattern id="sub" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#cfd6f5"/><path d="M0 8 8 0" stroke="#7c3aed" stroke-width="1.4" opacity=".5"/></pattern></defs>';
+    var subPat = '<defs><pattern id="sub" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#cfd6f5"/><path d="M0 8 8 0" stroke="#ff3b1f" stroke-width="1.4" opacity=".5"/></pattern></defs>';
     var body;
     if (product === "Shorts") {
       body = '<path d="M55 40 L145 40 L160 170 L112 170 L100 95 L88 170 L40 170 Z" fill="' + (lit("Front") ? "url(#sub)" : fill) + '" stroke="rgba(12,12,20,.25)"/>';

@@ -8,10 +8,10 @@
   --bg-soft: #f1f1f4;
   --text: #0c0c0e;
   --muted: #63636e;
-  --acc-1: #7c3aed;   /* royal violet */
-  --acc-2: #db2777;   /* ember pink  */
-  --acc-3: #06b6d4;   /* court cyan  */
-  --acc-4: #f59e0b;   /* medal amber */
+  --acc-1: #ff3b1f;   /* ember — confident sporty accent (retired AI-violet) */
+  --acc-2: #c81e0f;   /* deep ember */
+  --acc-3: #f59e0b;   /* amber */
+  --acc-4: #0c0c0e;   /* ink */
   --scroll: 0;        /* 0..1 page scroll progress, set by JS */
   --line: rgba(12, 12, 20, 0.09);
   --glass: rgba(255, 255, 255, 0.28);
@@ -120,10 +120,9 @@ body {
 }
 
 /* ---------- Typography helpers ---------- */
-.grad-text { color: var(--text); }
-/* gradient lettering reserved for the Coming Soon headline only */
+.grad-text { color: var(--acc-1); } /* ember accent on the key word of each heading */
 .coming-soon .grad-text {
-  background: linear-gradient(100deg, #0c0c0e 25%, var(--acc-1) 70%, var(--acc-2));
+  background: linear-gradient(100deg, #0c0c0e 20%, var(--acc-1) 65%, var(--acc-2));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -137,7 +136,7 @@ body {
 }
 .placeholder-note { color: var(--muted); font-size: 0.85rem; font-style: italic; }
 
-h2 { font-size: clamp(1.7rem, 4.5vw, 2.6rem); line-height: 1.15; letter-spacing: -0.02em; }
+h2 { font-size: clamp(2rem, 6vw, 3.7rem); line-height: 1.04; letter-spacing: -0.035em; font-weight: 700; }
 h3 { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.01em; }
 
 /* ---------- Buttons ---------- */
@@ -161,7 +160,7 @@ h3 { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.01em; }
   background: #0c0c0e;
   box-shadow: 0 8px 22px rgba(12, 12, 20, 0.18);
 }
-.btn-primary:hover { background: #2a2a30; box-shadow: 0 10px 28px rgba(124, 58, 237, 0.35); }
+.btn-primary:hover { background: #2a2a30; box-shadow: 0 10px 28px rgba(255, 59, 31, 0.35); }
 .btn-ghost {
   color: var(--text);
   border-color: var(--line);
@@ -532,7 +531,7 @@ select.field { appearance: none; }
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .logo-row, .shimmer::before { animation: none !important; }
+  .logo-row, .shimmer::before, .kinetic-track { animation: none !important; }
   .motion-bg { opacity: 0.5; }
   .reveal { opacity: 1; transform: none; transition: none; }
 }
@@ -600,3 +599,57 @@ select.field { appearance: none; }
   .notify { flex-direction: column; }
   .hero-stats { gap: 20px; }
 }
+
+/* ============================================================
+   Editorial / premium direction (design-taste-frontend: overhaul)
+   ============================================================ */
+
+/* numbered section indices */
+main { counter-reset: sec; }
+.section-head .eyebrow::before {
+  counter-increment: sec;
+  content: counter(sec, decimal-leading-zero) " / ";
+  color: var(--acc-1);
+  font-weight: 700;
+}
+
+/* hero: oversized brand watermark + bigger wordmark */
+.hero { position: relative; overflow: hidden; }
+.hero-watermark {
+  position: absolute;
+  right: -8%; top: 50%;
+  transform: translateY(-50%);
+  width: min(62vw, 760px);
+  opacity: 0.045;
+  z-index: 0;
+  pointer-events: none;
+}
+.hero-copy, .hero-game { position: relative; z-index: 1; }
+.hero-wordmark { width: min(560px, 100%); }
+.hero-stats strong { font-size: 1.5rem; }
+
+/* kinetic keyword band */
+.kinetic-band {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: #0c0c0e;
+  overflow: hidden;
+  padding: 16px 0;
+}
+.kinetic-track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  white-space: nowrap;
+  animation: kinetic 32s linear infinite;
+}
+.kinetic-track span {
+  font-size: clamp(1.3rem, 3.6vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #fafafa;
+  padding: 0 26px;
+}
+.kinetic-track i { color: var(--acc-1); font-style: normal; font-size: 0.9em; }
+@keyframes kinetic { to { transform: translateX(-50%); } }
