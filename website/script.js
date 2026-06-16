@@ -489,151 +489,63 @@
 })();
 
 /* ============================================================
-   Dynamic sports motion background — spinning sport balls with
-   motion speed-lines plus drifting athlete silhouettes.
-   Recognizable sports graphics, animated, tuned to stay light
-   on phones (capped DPR, fewer/lower-FPS on mobile, pauses when
-   hidden, single static frame under reduced-motion).
+   Unique sporty background — a halftone "energy wave": a grid of
+   dots whose size & brightness ripple in diagonal bands sweeping
+   across the page, with ember-tinted crests. Reads like a stadium
+   LED board / sports-poster halftone. Live, light, mobile-safe:
+   bucketed Path2D fills, lower density + FPS on phones, pauses
+   when hidden, single static frame under reduced-motion.
    ============================================================ */
-(function sportsBackground() {
+(function energyBackground() {
   "use strict";
   var canvas = document.getElementById("motionBg");
-  if (!canvas || !canvas.getContext) return;
+  if (!canvas || !canvas.getContext || typeof Path2D === "undefined") return;
   var ctx = canvas.getContext("2d");
   if (!ctx) return;
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var TAU = Math.PI * 2;
 
   var DPR = Math.min(window.devicePixelRatio || 1, 1.5);
-  var W = 0, H = 0, mobile = false, FPS = 1000 / 50;
-  var balls = [], figs = [], running = true, rafId = null, last = 0;
+  var W = 0, H = 0, mobile = false, FPS = 1000 / 45, gap = 24, maxR = 3.6, t = 0;
+  var running = true, rafId = null, last = 0;
 
-  var KINDS = ["football", "basket", "volley", "cricket", "tennis"];
-  var runnerPath = (typeof Path2D !== "undefined")
-    ? new Path2D("M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.6 13.9 1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1l-5.2 2.2v4.7h2v-3.4l1.8-.7-1.6 8.1-4.9-1-.4 2 7 1.4z")
-    : null;
-
-  function rnd(a, b) { return a + Math.random() * (b - a); }
-  function circle(r) { ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); }
-
-  function paintBall(kind, r) {
-    ctx.save();
-    if (kind === "football") {
-      circle(r); ctx.fillStyle = "#f3f3f5"; ctx.fill();
-      ctx.save(); circle(r); ctx.clip();
-      ctx.fillStyle = "#15151c";
-      ctx.beginPath();
-      for (var i = 0; i < 5; i++) { var a = -Math.PI / 2 + i * 2 * Math.PI / 5; var x = Math.cos(a) * r * 0.4, y = Math.sin(a) * r * 0.4; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
-      ctx.closePath(); ctx.fill();
-      ctx.strokeStyle = "rgba(21,21,28,0.85)"; ctx.lineWidth = r * 0.05;
-      for (var s = 0; s < 5; s++) { var b = -Math.PI / 2 + s * 2 * Math.PI / 5; ctx.beginPath(); ctx.moveTo(Math.cos(b) * r * 0.4, Math.sin(b) * r * 0.4); ctx.lineTo(Math.cos(b) * r, Math.sin(b) * r); ctx.stroke(); }
-      ctx.restore();
-    } else if (kind === "basket") {
-      circle(r); ctx.fillStyle = "#e8651a"; ctx.fill();
-      ctx.save(); circle(r); ctx.clip();
-      ctx.strokeStyle = "rgba(28,16,8,0.8)"; ctx.lineWidth = r * 0.05;
-      ctx.beginPath(); ctx.moveTo(0, -r); ctx.lineTo(0, r); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(-r, 0); ctx.lineTo(r, 0); ctx.stroke();
-      ctx.beginPath(); ctx.arc(-r * 1.15, 0, r * 1.3, -0.65, 0.65); ctx.stroke();
-      ctx.beginPath(); ctx.arc(r * 1.15, 0, r * 1.3, Math.PI - 0.65, Math.PI + 0.65); ctx.stroke();
-      ctx.restore();
-    } else if (kind === "volley") {
-      circle(r); ctx.fillStyle = "#f6f8ff"; ctx.fill();
-      ctx.save(); circle(r); ctx.clip();
-      ctx.strokeStyle = "rgba(36,71,199,0.75)"; ctx.lineWidth = r * 0.05;
-      ctx.beginPath(); ctx.arc(-r * 0.6, -r * 0.3, r * 1.15, -0.4, 1.1); ctx.stroke();
-      ctx.beginPath(); ctx.arc(r * 0.4, r * 0.7, r * 1.15, -2.3, -0.9); ctx.stroke();
-      ctx.beginPath(); ctx.arc(r * 0.7, -r * 0.7, r * 1.15, 1.7, 3.1); ctx.stroke();
-      ctx.restore();
-    } else if (kind === "cricket") {
-      circle(r); ctx.fillStyle = "#b21228"; ctx.fill();
-      ctx.save(); circle(r); ctx.clip();
-      ctx.strokeStyle = "rgba(255,255,255,0.8)"; ctx.lineWidth = r * 0.05; ctx.setLineDash([r * 0.13, r * 0.1]);
-      ctx.beginPath(); ctx.moveTo(0, -r); ctx.lineTo(0, r); ctx.stroke(); ctx.setLineDash([]);
-      ctx.restore();
-    } else {
-      circle(r); ctx.fillStyle = "#c7d92b"; ctx.fill();
-      ctx.save(); circle(r); ctx.clip();
-      ctx.strokeStyle = "rgba(255,255,255,0.85)"; ctx.lineWidth = r * 0.05;
-      ctx.beginPath(); ctx.arc(-r * 1.05, 0, r * 1.3, -0.6, 0.6); ctx.stroke();
-      ctx.beginPath(); ctx.arc(r * 1.05, 0, r * 1.3, Math.PI - 0.6, Math.PI + 0.6); ctx.stroke();
-      ctx.restore();
-    }
-    circle(r); ctx.strokeStyle = "rgba(12,12,20,0.16)"; ctx.lineWidth = 1; ctx.stroke();
-    ctx.restore();
-  }
-
-  function makeBalls(n) {
-    balls = [];
-    for (var i = 0; i < n; i++) {
-      var ang = rnd(0, Math.PI * 2), spd = rnd(mobile ? 0.2 : 0.25, mobile ? 0.5 : 0.7);
-      balls.push({
-        kind: KINDS[(Math.random() * KINDS.length) | 0],
-        x: Math.random() * W, y: Math.random() * H, r: rnd(mobile ? 24 : 34, mobile ? 48 : 88),
-        vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd,
-        rot: Math.random() * Math.PI * 2, vr: rnd(-0.012, 0.012)
-      });
-    }
-  }
-  function makeFigs(n) {
-    figs = [];
-    for (var i = 0; i < n; i++) figs.push({ x: Math.random() * W, y: rnd(H * 0.2, H * 0.85), s: rnd(9, 16), vx: rnd(0.12, 0.4), ph: Math.random() * 6 });
-  }
+  var INKB = 7, EMBB = 5, inkCols = [], embCols = [];
+  for (var i = 0; i < INKB; i++) { var m = (i + 0.5) / INKB * 0.84; inkCols.push("rgba(12,12,20," + (0.05 + m * 0.13).toFixed(3) + ")"); }
+  for (var j = 0; j < EMBB; j++) { var me = 0.84 + (j + 0.5) / EMBB * 0.16; embCols.push("rgba(255,59,31," + (0.12 + (me - 0.84) * 1.5).toFixed(3) + ")"); }
 
   function size() {
     var rect = canvas.getBoundingClientRect();
     W = rect.width; H = rect.height; if (!W || !H) return;
     mobile = W < 760;
+    gap = mobile ? 28 : 24;
+    maxR = mobile ? 2.8 : 3.6;
+    FPS = mobile ? 1000 / 30 : 1000 / 45;
     canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    FPS = mobile ? 1000 / 30 : 1000 / 50;
-    makeBalls(mobile ? 2 : 5);
-    makeFigs(mobile ? 1 : 3);
   }
 
-  function drawFigs(move) {
-    if (!runnerPath) return;
-    ctx.globalAlpha = 0.05; ctx.fillStyle = "#12121c";
-    for (var i = 0; i < figs.length; i++) {
-      var f = figs[i];
-      ctx.save();
-      ctx.translate(f.x, f.y + Math.sin(f.ph) * 4);
-      ctx.scale(f.s, f.s); ctx.translate(-12, -12);
-      ctx.fill(runnerPath);
-      ctx.restore();
-      if (move) { f.x += f.vx; f.ph += 0.012; if (f.x > W + f.s * 14) { f.x = -f.s * 14; f.y = rnd(H * 0.2, H * 0.85); } }
-    }
-    ctx.globalAlpha = 1;
-  }
-
-  function drawBalls(move) {
-    for (var i = 0; i < balls.length; i++) {
-      var b = balls[i];
-      var sp = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
-      if (sp > 0.05) {
-        var ux = -b.vx / sp, uy = -b.vy / sp;
-        ctx.globalAlpha = 0.14; ctx.strokeStyle = "#ff3b1f"; ctx.lineWidth = 1.4;
-        for (var k = -1; k <= 1; k++) {
-          var ox = -uy * b.r * 0.5 * k, oy = ux * b.r * 0.5 * k;
-          ctx.beginPath();
-          ctx.moveTo(b.x + ox + ux * b.r * 1.1, b.y + oy + uy * b.r * 1.1);
-          ctx.lineTo(b.x + ox + ux * (b.r * 1.1 + b.r * 1.4 + sp * 18), b.y + oy + uy * (b.r * 1.1 + b.r * 1.4 + sp * 18));
-          ctx.stroke();
-        }
-        ctx.globalAlpha = 1;
-      }
-      ctx.globalAlpha = 0.4;
-      ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.rot); paintBall(b.kind, b.r); ctx.restore();
-      ctx.globalAlpha = 1;
-      if (move) {
-        b.x += b.vx; b.y += b.vy; b.rot += b.vr;
-        var m = b.r + 14;
-        if (b.x < -m) b.x = W + m; if (b.x > W + m) b.x = -m;
-        if (b.y < -m) b.y = H + m; if (b.y > H + m) b.y = -m;
+  function frame(move) {
+    ctx.clearRect(0, 0, W, H);
+    var ink = [], emb = [], k;
+    for (k = 0; k < INKB; k++) ink.push(new Path2D());
+    for (k = 0; k < EMBB; k++) emb.push(new Path2D());
+    for (var y = gap / 2; y < H; y += gap) {
+      for (var x = gap / 2; x < W; x += gap) {
+        var w1 = 0.5 + 0.5 * Math.sin((x + y) * 0.012 - t);
+        var w2 = 0.5 + 0.5 * Math.sin((x * 0.7 - y * 0.5) * 0.009 + t * 0.6);
+        var m = w1 * 0.68 + w2 * 0.32;
+        var r = maxR * m * m;
+        if (r < 0.4) continue;
+        var p;
+        if (m > 0.84) { p = emb[Math.min(EMBB - 1, ((m - 0.84) / 0.16 * EMBB) | 0)]; }
+        else { p = ink[Math.min(INKB - 1, (m / 0.84 * INKB) | 0)]; }
+        p.moveTo(x + r, y); p.arc(x, y, r, 0, TAU);
       }
     }
+    for (k = 0; k < INKB; k++) { ctx.fillStyle = inkCols[k]; ctx.fill(ink[k]); }
+    for (k = 0; k < EMBB; k++) { ctx.fillStyle = embCols[k]; ctx.fill(emb[k]); }
+    if (move) t += 0.022;
   }
-
-  function frame(move) { ctx.clearRect(0, 0, W, H); drawFigs(move); drawBalls(move); }
 
   function loop(now) {
     rafId = null; if (!running) return;
