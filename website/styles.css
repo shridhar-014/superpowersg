@@ -77,16 +77,30 @@ body {
 }
 
 /* ---------- Sketch athletes band (scroll-engaged) ---------- */
-/* ---------- Live kinetic-energy motion background ---------- */
-.motion-bg {
+/* ---------- Clean sporty background: stadium track lanes ---------- */
+.bg-track {
   position: fixed;
   inset: 0;
-  width: 100%;
-  height: 100%;
   z-index: 0;
   pointer-events: none;
-  display: block;
+  overflow: hidden;
 }
+.lane {
+  position: absolute;
+  right: -58vmax;                 /* arc centre sits far off bottom-right */
+  bottom: -66vmax;
+  border: 1.5px solid rgba(12, 12, 20, 0.055);
+  border-radius: 50%;
+  /* whisper of parallax: lanes rotate slightly as the page scrolls */
+  transform: rotate(calc(var(--scroll) * 14deg));
+  transform-origin: center;
+}
+.l1 { width: 104vmax; height: 104vmax; }
+.l2 { width: 118vmax; height: 118vmax; }
+.l3 { width: 132vmax; height: 132vmax; }
+.l4 { width: 146vmax; height: 146vmax; }
+.l5 { width: 160vmax; height: 160vmax; border-color: rgba(12, 12, 20, 0.04); }
+.lane-ember { border-color: rgba(255, 59, 31, 0.14); border-width: 2px; }
 
 .bg-sketch {
   position: fixed;
@@ -552,7 +566,6 @@ select.field { appearance: none; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .logo-row, .shimmer::before, .kinetic-track { animation: none !important; }
-  .motion-bg { opacity: 0.5; }
   .pipe-pulse, .pl-dot { animation: none !important; }
   .reveal { opacity: 1; transform: none; transition: none; }
 }
