@@ -633,7 +633,7 @@
       if (!wrap) return;
       wrap.innerHTML = "";
       C.fabric.colors.forEach(function (c) {
-        var s = el('<button type="button" class="swatch' + (c === C.color ? " active" : "") + '" style="background:' + (COLOR_HEX[c] || "#ddd") + '" aria-label="' + esc(c) + '" title="' + esc(c) + '"></button>');
+        var s = el('<button type="button" class="swatch' + (c === C.color ? " active" : "") + '" style="background:' + esc(COLOR_HEX[c] || "#ddd") + '" aria-label="' + esc(c) + '" title="' + esc(c) + '"></button>');
         s.addEventListener("click", function () {
           C.color = c;
           $$(".swatch", wrap).forEach(function (x) { x.classList.remove("active"); });
@@ -855,7 +855,14 @@
       if (plain.length) PLAIN_FABRICS = plain;
       if (sub.length) SUB_FABRICS = sub;
     },
-    colors: function (o) { var m = {}; o.forEach(function (r) { if (r.color_name) m[r.color_name] = r.hex_code; }); if (Object.keys(m).length) COLOR_HEX = m; },
+    colors: function (o) {
+      var m = {};
+      o.forEach(function (r) {
+        // only accept well-formed hex values — data files can't inject markup/CSS
+        if (r.color_name && /^#[0-9a-fA-F]{3,8}$/.test(r.hex_code || "")) m[r.color_name] = r.hex_code;
+      });
+      if (Object.keys(m).length) COLOR_HEX = m;
+    },
     designs: function (o) { var v = o.map(function (r) { return r.design_name; }).filter(Boolean); if (v.length) DESIGNS = v; },
     print_areas: function (o) {
       if (!o.length) return;

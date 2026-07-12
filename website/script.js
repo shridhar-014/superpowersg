@@ -181,6 +181,11 @@
 
     var claimForm = $("#gameClaim");
     var rewardEl = $("#gameReward");
+    function escHtml(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+      });
+    }
 
     function showClaimed() {
       var code = read("jp-reward-claimed");
@@ -188,7 +193,7 @@
       if (!code) return;
       if (rewardEl) {
         rewardEl.hidden = false;
-        rewardEl.innerHTML = '🎁 Your code: <strong>' + code + '</strong> — ' + label +
+        rewardEl.innerHTML = '🎁 Your code: <strong>' + escHtml(code) + '</strong> — ' + escHtml(label) +
           ' (valid this month). <a href="#teamwear">Use it in your enquiry →</a>';
       }
       if (claimForm) claimForm.hidden = true;
@@ -206,7 +211,7 @@
       if (!pending || read("jp-reward-claimed")) return;
       if (rewardEl) {
         rewardEl.hidden = false;
-        rewardEl.innerHTML = '🎁 You earned <strong>' + pending.label + '</strong>! Enter your email to get the code:';
+        rewardEl.innerHTML = '🎁 You earned <strong>' + escHtml(pending.label) + '</strong>! Enter your email to get the code:';
       }
       if (claimForm) claimForm.hidden = false;
     }
