@@ -135,6 +135,12 @@
   }
   function el(html) { var t = document.createElement("div"); t.innerHTML = html.trim(); return t.firstChild; }
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function imgPath(v) { if (!v) return null; v = String(v).trim(); if (!v) return null; return v.indexOf("/") >= 0 ? v : "assets/products/" + v; }
+  function cardImg(item, fallbackLabel) {
+    return item.img
+      ? '<img class="eq-photo" src="' + esc(item.img) + '" alt="' + esc(item.name) + '" loading="lazy">'
+      : '<div class="eq-img" aria-hidden="true"><span>' + esc(fallbackLabel) + "</span>Photo coming soon</div>";
+  }
 
   /* ---- size grid component: per-size quantities ---- */
   function sizeGrid(product) {
@@ -291,7 +297,7 @@
       grid.innerHTML = "";
       EQUIPMENT.filter(function (e) { return active === "All" || e.sport === active; }).forEach(function (eq) {
         var card = el('<article class="glass eq-card">' +
-          '<div class="eq-img" aria-hidden="true"><span>' + esc(eq.sport) + '</span>Photo coming soon</div>' +
+          cardImg(eq, eq.sport) +
           "<h3>" + esc(eq.name) + "</h3>" +
           '<p class="eq-detail">' + esc(eq.detail) + "</p>" +
           '<p class="eq-price">' + money(eq.price) + ' <span>/pc</span></p>' +
@@ -831,7 +837,7 @@
       SIZES = sizes; STYLE_OPTIONS = styles; CUSTOM_BASE = base; SLEEVE_PRODUCTS = sleeves;
     },
     equipment: function (o) {
-      var v = o.map(function (r, i) { return { id: "eq" + i, sport: r.sport, name: r.item_name, price: num(r.price_inr), detail: r.description, img: r.image_file || null }; })
+      var v = o.map(function (r, i) { return { id: "eq" + i, sport: r.sport, name: r.item_name, price: num(r.price_inr), detail: r.description, img: imgPath(r.image_file) }; })
         .filter(function (r) { return r.name; });
       if (v.length) EQUIPMENT = v;
     },
@@ -840,7 +846,7 @@
       var ready = {};
       o.forEach(function (r, i) {
         if (!r.product_type || !r.item_name) return;
-        (ready[r.product_type] = ready[r.product_type] || []).push({ id: "r" + i, name: r.item_name, price: num(r.price_inr), img: r.image_file || null });
+        (ready[r.product_type] = ready[r.product_type] || []).push({ id: "r" + i, name: r.item_name, price: num(r.price_inr), img: imgPath(r.image_file) });
       });
       if (Object.keys(ready).length) READY = ready;
     },

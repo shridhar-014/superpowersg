@@ -224,3 +224,5 @@
 .review-table tr:last-child td { border-bottom: none; font-weight: 700; }
 
 .b2b-data-status { margin-top: 10px; font-size: 0.74rem; color: var(--muted); }
+
+.eq-photo { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; border: 1px solid var(--line); background: #fff; }
