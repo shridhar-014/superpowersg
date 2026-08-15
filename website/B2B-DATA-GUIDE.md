@@ -108,6 +108,37 @@ nothing breaks if you leave it blank.
 
 ---
 
+## The printed catalogue (catalogue.html + admin.html)
+
+Separate from the B2B portal, the site has a **book-style A5 catalogue** at
+jaypeesports.in/catalogue.html — two segments (Sportswear manufactured
+in-house, then Sports Equipment), one product per page, printable via the
+**Print / Save PDF** button and shareable as a normal link.
+
+Its data lives in **one file: `website/data/catalogue.json`** — and you never
+need to edit it by hand. Use the **admin page** instead:
+
+1. Open jaypeesports.in/admin.html (it's hidden from search engines).
+2. Add / edit / delete products with the form. Every change saves **in your
+   browser only** and shows up instantly when you open the catalogue on the
+   same device — perfect for previewing.
+3. When happy, click **Export catalogue.json** and replace
+   `website/data/catalogue.json` on github.com with the downloaded file
+   (same upload flow as the CSVs). That publishes it for everyone.
+
+Each product page reserves a photo slot. Until you add a photo (same
+`website/assets/products/` folder as above), the slot prints a ready-to-use
+**AI image-generation prompt** built from the product's details plus one shared
+style description (editable in the admin's "Shared image style" box), so all
+generated photos come out matching. Generate the image, save it as the file
+name shown under the prompt, upload it, and the photo replaces the prompt
+automatically.
+
+> The catalogue and the B2B portal read **different files** — adding a product
+> to the catalogue does not change the B2B portal, and vice versa.
+
+---
+
 ## If something looks wrong
 - The portal always falls back to a built-in sample catalogue, so a bad file
   never takes the page down — it just keeps showing the last good data.

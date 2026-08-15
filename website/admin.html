@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Catalogue Admin — Jaypee Sports</title>
+  <link rel="icon" type="image/svg+xml" href="assets/brand/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css?v=20260815a">
+</head>
+<body>
+
+  <header class="bar">
+    <a class="bar-brand" href="index.html">
+      <img src="assets/brand/jp-logo.svg" alt="Jaypee Sports" width="595" height="270">
+    </a>
+    <div class="bar-title">
+      <strong>Catalogue Admin</strong>
+      <span id="statusLine">Loading…</span>
+    </div>
+    <div class="bar-actions">
+      <a class="btn btn-ghost" href="catalogue.html">View catalogue</a>
+      <button class="btn btn-ghost" id="importBtn" type="button">Import file</button>
+      <button class="btn btn-ghost btn-danger" id="discardBtn" type="button">Discard drafts</button>
+      <button class="btn btn-primary" id="exportBtn" type="button">Export catalogue.json</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <p class="explain">
+      Changes save instantly <strong>in this browser</strong> and appear right away when you open the
+      catalogue on this device. To publish for everyone: <strong>Export catalogue.json</strong> and replace
+      <code>website/data/catalogue.json</code> in the repository with the downloaded file.
+    </p>
+
+    <div class="grid">
+
+      <!-- ============ FORM ============ -->
+      <section class="panel" id="formPanel">
+        <h2 id="formTitle">Add product</h2>
+        <form id="productForm" autocomplete="off">
+          <input type="hidden" id="fId">
+
+          <div class="row two">
+            <label>Segment
+              <select id="fSegment" required></select>
+            </label>
+            <label>Category
+              <select id="fCategory" required></select>
+            </label>
+          </div>
+
+          <label>Product name
+            <input type="text" id="fName" required maxlength="90" placeholder="e.g. Pro Match Jersey — Dot-Knit">
+          </label>
+
+          <label>Description
+            <textarea id="fDesc" rows="3" maxlength="400" placeholder="What it is, fabric/build, who it's for"></textarea>
+          </label>
+
+          <div class="row two">
+            <label>Sizes <small>separate with |</small>
+              <input type="text" id="fSizes" placeholder="S|M|L|XL|XXL">
+            </label>
+            <label>Colours <small>separate with |</small>
+              <input type="text" id="fColors" list="colorNames" placeholder="Navy|Red|White">
+            </label>
+          </div>
+          <datalist id="colorNames"></datalist>
+
+          <fieldset class="row price-row">
+            <legend>Price</legend>
+            <label class="radio"><input type="radio" name="priceMode" value="exact" checked> Exact</label>
+            <label class="radio"><input type="radio" name="priceMode" value="range"> Range</label>
+            <label class="radio"><input type="radio" name="priceMode" value="on_request"> On request</label>
+            <div class="row two price-inputs">
+              <label>₹ <span id="minLabel">Price</span>
+                <input type="number" id="fPriceMin" min="0" step="1">
+              </label>
+              <label id="maxWrap">₹ Max
+                <input type="number" id="fPriceMax" min="0" step="1">
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="row two">
+            <label>Image file <small>in assets/products/</small>
+              <input type="text" id="fImage" placeholder="pro-match-jersey.jpg (blank = show prompt)">
+            </label>
+            <label>Sort order <small>lower = earlier</small>
+              <input type="number" id="fSort" min="0" step="10" value="10">
+            </label>
+          </div>
+
+          <label class="prompt-label">Image generation prompt
+            <small id="promptState">auto-composed from the fields above</small>
+            <textarea id="fPrompt" rows="6" spellcheck="false"></textarea>
+          </label>
+          <button type="button" class="linkish" id="promptReset" hidden>↺ Reset prompt to auto</button>
+
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit" id="saveBtn">Add to catalogue</button>
+            <button class="btn btn-ghost" type="button" id="cancelEdit" hidden>Cancel editing</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- ============ LIST + SETTINGS ============ -->
+      <section class="col">
+        <section class="panel">
+          <h2>Products <span class="count" id="prodCount"></span></h2>
+          <div id="productList" class="plist"></div>
+        </section>
+
+        <section class="panel">
+          <h2>Shared image style</h2>
+          <p class="hint">Appended to every product's image prompt so all generated photos match.</p>
+          <textarea id="styleSuffix" rows="5" spellcheck="false"></textarea>
+          <div class="form-actions">
+            <button class="btn btn-ghost" id="saveStyle" type="button">Save style</button>
+          </div>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <input type="file" id="importInput" accept=".json,application/json" hidden>
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <script src="catalogue-shared.js?v=20260815a"></script>
+  <script src="admin.js?v=20260815a"></script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://www.googletagmanager.com https://*.google-analytics.com; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://stats.g.doubleclick.net; object-src 'none'; base-uri 'self'; upgrade-insecure-requests">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Product Catalogue — Jaypee Sports | Sportswear Manufactured In-House &amp; Sports Equipment</title>
+  <meta name="description" content="The Jaypee Sports product catalogue: in-house manufactured sportswear — sports t-shirts, round necks, tracksuits, jerseys, custom orders — and sports equipment for cricket, football, basketball, volleyball and hockey. Printable A5 booklet.">
+  <link rel="canonical" href="https://jaypeesports.in/catalogue.html">
+  <meta name="theme-color" content="#fafafa">
+  <meta property="og:site_name" content="Jaypee Sports">
+  <meta property="og:title" content="Jaypee Sports — Product Catalogue">
+  <meta property="og:description" content="In-house manufactured sportswear and sports equipment — browse online or print as an A5 booklet. Quality Par Excellence.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://jaypeesports.in/catalogue.html">
+  <meta property="og:locale" content="en_IN">
+  <link rel="icon" type="image/svg+xml" href="assets/brand/favicon.svg">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/brand/favicon-64.png">
+  <link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="catalogue.css?v=20260815a">
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0HHJSJ3TM8"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-0HHJSJ3TM8');
+  </script>
+</head>
+<body>
+
+  <!-- ============ SCREEN-ONLY TOOLBAR ============ -->
+  <header class="toolbar screen-only">
+    <a class="toolbar-brand" href="index.html">
+      <img src="assets/brand/jp-logo.svg" alt="Jaypee Sports" width="595" height="270">
+    </a>
+    <nav class="toolbar-links" aria-label="Catalogue sections">
+      <a href="#seg-sportswear">Sportswear</a>
+      <a href="#seg-equipment">Equipment</a>
+      <a href="admin.html">Admin</a>
+    </nav>
+    <button class="btn btn-primary" id="printBtn" type="button">Print / Save PDF</button>
+  </header>
+  <p class="print-tip screen-only">
+    Booklet prints on <strong>A5 paper</strong> — in the print dialog enable
+    <strong>“Background graphics”</strong> for full colour, and select A5 if it isn’t chosen automatically.
+  </p>
+
+  <div class="draft-banner screen-only" id="draftBanner" hidden></div>
+
+  <!-- ============ BOOKLET PAGES (rendered by catalogue.js) ============ -->
+  <main class="pages" id="pages" aria-live="polite">
+    <noscript><p class="load-note">This catalogue needs JavaScript to load its product data.</p></noscript>
+    <p class="load-note screen-only" id="loadNote">Loading catalogue…</p>
+  </main>
+
+  <script src="catalogue-shared.js?v=20260815a"></script>
+  <script src="catalogue.js?v=20260815a"></script>
+</body>
+</html>
